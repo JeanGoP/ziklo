@@ -182,6 +182,17 @@ app.MapPost("/api/simulations/loans", (SimulationRequest request, LoanSimulator 
 
 if (businessEnabled)
 {
+    app.MapGet("/api/municipalities", async (ZikloDbContext db,
+        HttpContext http, CancellationToken ct) =>
+    {
+        var places = await db.Municipalities.AsNoTracking()
+            .OrderBy(x => x.Name).ThenBy(x => x.DepartmentName)
+            .Select(x => new { x.Code, x.Name, x.DepartmentCode, x.DepartmentName })
+            .ToListAsync(ct);
+        http.Response.Headers.CacheControl = "public, max-age=86400";
+        return Results.Ok(places);
+    }).WithTags("Municipios de Colombia");
+
     app.MapGet("/api/application-products", async (ZikloDbContext db, CancellationToken ct) =>
     {
         DateOnly today = DateOnly.FromDateTime(DateTime.UtcNow);

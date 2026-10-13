@@ -13,6 +13,15 @@ internal static class DemoSeed
         using var scope = services.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<ZikloDbContext>();
         await db.Database.EnsureCreatedAsync();
+        await db.Database.ExecuteSqlRawAsync("""
+            CREATE TABLE IF NOT EXISTS "Municipalities" (
+                "Code" TEXT NOT NULL PRIMARY KEY, "Name" TEXT NOT NULL,
+                "DepartmentCode" TEXT NOT NULL, "DepartmentName" TEXT NOT NULL
+            );
+            CREATE INDEX IF NOT EXISTS "IX_Municipalities_DepartmentCode_Name"
+                ON "Municipalities" ("DepartmentCode", "Name");
+            """);
+        await MunicipalitySeed.SeedDemoAsync(db);
         // EnsureCreated does not add tables to an existing demonstration database.
         await db.Database.ExecuteSqlRawAsync("""
             CREATE TABLE IF NOT EXISTS "CreditApplications" (

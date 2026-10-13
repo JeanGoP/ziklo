@@ -128,7 +128,10 @@ $('create-version').addEventListener('submit', async event => {
   event.preventDefault();
   const form = event.currentTarget;
   const button = form.querySelector('button[type=submit]');
-  const amount = key => Number(form.elements[key].value);
+  ZikloMoney.validateAll(form);
+  if (!form.reportValidity()) return;
+  const amount = key => form.elements[key].matches('[data-money]')
+    ? ZikloMoney.parse(form.elements[key]) : Number(form.elements[key].value);
   if (amount('maximumAmount') < amount('minimumAmount') ||
       amount('maximumInstallments') < amount('minimumInstallments')) {
     feedback('El monto y plazo máximos deben ser mayores o iguales a los mínimos.', true);

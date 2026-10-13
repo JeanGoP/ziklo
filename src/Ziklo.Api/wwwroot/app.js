@@ -12,6 +12,11 @@ function syncOptions() {
 }
 input('method').addEventListener('change', syncOptions);
 syncOptions();
+input('customPrincipal').addEventListener('blur', event => {
+  event.target.value = event.target.value.split(';')
+    .map(value => value.trim() ? ZikloMoney.clean(value.trim()) : '')
+    .join('; ');
+});
 
 const today = new Date();
 const first = new Date(Date.UTC(today.getFullYear(), today.getMonth() + 1, today.getDate()));
@@ -20,8 +25,8 @@ input('firstDueDate').value = first.toISOString().slice(0, 10);
 
 function payload() {
   return {
-    principal: Number(input('principal').value),
-    rate: Number(input('rate').value) / 100,
+    principal: ZikloMoney.parse(input('principal')),
+    rate: ZikloMoney.parse(input('rate')) / 100,
     rateKind: input('rateKind').value,
     dayCount: input('dayCount').value,
     frequency: input('frequency').value,
@@ -31,10 +36,10 @@ function payload() {
     method: input('method').value,
     currencyDecimals: 2,
     capitalizeInterest: input('capitalize').checked,
-    insurancePerInstallment: Number(input('insurance').value || 0),
-    otherChargePerInstallment: Number(input('charges').value || 0),
+    insurancePerInstallment: ZikloMoney.parse(input('insurance')) || 0,
+    otherChargePerInstallment: ZikloMoney.parse(input('charges')) || 0,
     customPrincipal: input('method').value === 'Custom'
-      ? input('customPrincipal').value.split(',').map(value => Number(value.trim()))
+      ? input('customPrincipal').value.split(';').map(value => ZikloMoney.parse(value.trim()))
       : null
   };
 }
@@ -64,6 +69,8 @@ function render(data) {
 form.addEventListener('submit', async event => {
   event.preventDefault();
   feedback.textContent = '';
+  ZikloMoney.validateAll(form);
+  if (!form.reportValidity()) return;
   submit.disabled = true;
   try {
     const response = await fetch('/api/simulations/loans', {

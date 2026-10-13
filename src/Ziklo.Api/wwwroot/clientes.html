@@ -38,7 +38,7 @@
             <div class="field"><label for="city">Ciudad</label><input id="city" maxlength="120"></div>
             <div class="field"><label for="birth-date">Fecha de nacimiento</label><input id="birth-date" type="date"></div>
             <div class="field full"><label for="economic-activity">Actividad económica</label><input id="economic-activity" maxlength="200"></div>
-            <div class="field"><label for="monthly-income">Ingreso mensual</label><input id="monthly-income" type="number" min="0" step="0.01" inputmode="decimal"></div>
+            <div class="field"><label for="monthly-income">Ingreso mensual</label><input id="monthly-income" type="text" data-money data-min="0" inputmode="decimal" placeholder="Ej. 2.500.000"></div>
             <div class="field"><label for="employer">Empresa donde trabaja</label><input id="employer" maxlength="250"></div>
             <button class="primary full" type="submit">Guardar cliente</button>
           </form>
@@ -85,6 +85,7 @@
     </section>
   </main>
   <script src="session.js?v=12"></script>
-  <script src="clientes.js?v=3"></script>
+  <script src="money-input.js?v=1"></script>
+  <script src="clientes.js?v=4"></script>
 </body>
 </html>

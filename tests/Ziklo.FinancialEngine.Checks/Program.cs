@@ -984,6 +984,11 @@ Check("solicitud radicada con soporte sin crear préstamo", () =>
     {
         CompanyId = company.Id, UserId = originator.Id, Role = InitialRole.Originator
     });
+    context.Municipalities.Add(new Municipality
+    {
+        Code = "11001", Name = "BOGOTÁ, D.C.",
+        DepartmentCode = "11", DepartmentName = "BOGOTÁ, D.C."
+    });
     context.SaveChanges();
     var lending = new LendingService(context, simulator);
     var product = lending.CreateProductAsync(company.Id,
@@ -998,7 +1003,7 @@ Check("solicitud radicada con soporte sin crear préstamo", () =>
     byte[] pdf = "%PDF-1.7 soporte ficticio"u8.ToArray();
     var request = new SubmitCreditApplication(company.Id, version.Id, "CC", "1098765432",
         "Valentina Martínez López", "valentina@ejemplo.test", "3005550140",
-        "Bogotá", "Comerciante independiente", 4200000m, 750000m,
+        "BOGOTÁ, D.C. · BOGOTÁ, D.C.", "Comerciante independiente", 4200000m, 750000m,
         5000000m, 12, "Compra de inventario de ejemplo", "{}", true,
         [new CreditApplicationUpload("Income", "ingresos.pdf", "application/pdf", pdf)],
         originator.Id);
@@ -1014,6 +1019,13 @@ Check("solicitud radicada con soporte sin crear préstamo", () =>
     Equal(0, context.LoanMovements.Count());
     Equal(Convert.ToHexString(System.Security.Cryptography.SHA256.HashData(pdf)),
         context.CreditApplicationDocuments.Single().Sha256);
+    try
+    {
+        service.SubmitAsync(request with { City = "Ciudad inexistente" }, default)
+            .GetAwaiter().GetResult();
+        throw new Exception("Se aceptó un municipio fuera del catálogo.");
+    }
+    catch (LendingRuleException) { }
     try
     {
         service.SubmitAsync(request with { DemoAcknowledged = false }, default)

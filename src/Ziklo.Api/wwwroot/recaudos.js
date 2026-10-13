@@ -233,7 +233,8 @@ function updateSelectedInstallments(setAmount = false) {
   el('selected-installments').textContent = chosen.length
     ? `Cuotas ${chosen.map(line => line.number).join(', ')} · saldo registrado ${money(balance, selectedLoan?.currencyCode)}. La mora adicional se calcula al registrar.`
     : 'Ninguna cuota seleccionada.';
-  if (setAmount) el('payment-amount').value = chosen.length ? balance.toFixed(2) : '';
+  if (setAmount) el('payment-amount').value = chosen.length
+    ? ZikloMoney.clean(balance.toFixed(2)) : '';
 }
 
 function renderReceipts(result, currency) {
@@ -319,6 +320,8 @@ el('next').addEventListener('click', () => { offset += 25; searchLoans(); });
 el('payment-date').addEventListener('change', () => renderSchedule({installments: scheduleLines}, selectedLoan?.currencyCode));
 el('payment-form').addEventListener('submit', async event => {
   event.preventDefault();
+  ZikloMoney.validateAll(event.currentTarget);
+  if (!event.currentTarget.reportValidity()) return;
   if (!selectedLoan) return;
   if (selectedInstallments.size === 0) {
     el('payment-feedback').textContent = 'Selecciona al menos una cuota exigible del plan de pagos.';
@@ -326,7 +329,7 @@ el('payment-form').addEventListener('submit', async event => {
   }
   const payload = {
     effectiveDate: el('payment-date').value,
-    amount: Number(el('payment-amount').value),
+    amount: ZikloMoney.parse(el('payment-amount')),
     method: el('payment-method').value,
     externalReference: el('payment-reference').value.trim(),
     installmentNumbers: [...selectedInstallments].sort((a, b) => a - b)

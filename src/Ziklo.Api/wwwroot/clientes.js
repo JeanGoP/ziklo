@@ -194,6 +194,8 @@ el('next').addEventListener('click', () => { offset += 25; searchClients(); });
 
 el('create-form').addEventListener('submit', async event => {
   event.preventDefault();
+  ZikloMoney.validateAll(event.currentTarget);
+  if (!event.currentTarget.reportValidity()) return;
   const button = event.currentTarget.querySelector('button[type="submit"]');
   button.disabled = true;
   el('create-feedback').textContent = '';
@@ -205,7 +207,8 @@ el('create-form').addEventListener('submit', async event => {
     address: optional('address'), phone: optional('phone'), whatsApp: optional('whatsapp'),
     email: optional('email'), city: optional('city'), birthDate: optional('birth-date'),
     economicActivity: optional('economic-activity'),
-    monthlyIncome: income === null ? null : Number(income), employer: optional('employer')
+    monthlyIncome: income === null ? null : ZikloMoney.parse(el('monthly-income')),
+    employer: optional('employer')
   };
   try {
     const response = await request(`${base()}/clients`, {

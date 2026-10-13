@@ -21,6 +21,7 @@ public sealed class ZikloDbContext(DbContextOptions<ZikloDbContext> options) : D
     public DbSet<ClientReference> ClientReferences => Set<ClientReference>();
     public DbSet<ClientDocument> ClientDocuments => Set<ClientDocument>();
     public DbSet<CreditProduct> CreditProducts => Set<CreditProduct>();
+    public DbSet<Municipality> Municipalities => Set<Municipality>();
     public DbSet<ProductVersion> ProductVersions => Set<ProductVersion>();
     public DbSet<Loan> Loans => Set<Loan>();
     public DbSet<CreditApplication> CreditApplications => Set<CreditApplication>();
@@ -122,6 +123,15 @@ public sealed class ZikloDbContext(DbContextOptions<ZikloDbContext> options) : D
 
     protected override void OnModelCreating(ModelBuilder model)
     {
+        model.Entity<Municipality>(b =>
+        {
+            b.HasKey(x => x.Code);
+            b.Property(x => x.Code).HasMaxLength(5).IsFixedLength();
+            b.Property(x => x.Name).HasMaxLength(120).IsRequired();
+            b.Property(x => x.DepartmentCode).HasMaxLength(2).IsFixedLength();
+            b.Property(x => x.DepartmentName).HasMaxLength(120).IsRequired();
+            b.HasIndex(x => new { x.DepartmentCode, x.Name });
+        });
         model.Entity<Company>(b =>
         {
             b.HasKey(x => x.Id);

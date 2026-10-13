@@ -234,6 +234,7 @@ public sealed class CreditApplicationService(ZikloDbContext db, ILendingService 
         string formData = request.FormDataJson?.Trim() ?? "{}";
         if (formData.Length > 30000)
             throw new LendingRuleException("El formulario detallado supera el tamaño permitido.");
+        var locations = new List<string> { city };
         try
         {
             using var details = JsonDocument.Parse(formData);
@@ -243,10 +244,27 @@ public sealed class CreditApplicationService(ZikloDbContext db, ILendingService 
                     field.Name.Length > 80 || field.Value.ValueKind != JsonValueKind.String ||
                     field.Value.GetString()!.Length > 500))
                 throw new JsonException();
+            foreach (string key in new[] { "appBirthPlace", "appIssuePlace", "appWorkCity",
+                         "coBirthPlace", "coIssuePlace", "coWorkCity" })
+                if (details.RootElement.TryGetProperty(key, out var field) &&
+                    !string.IsNullOrWhiteSpace(field.GetString()))
+                    locations.Add(field.GetString()!.Trim());
+            foreach (string key in new[] { "appGender", "coGender" })
+                if (details.RootElement.TryGetProperty(key, out var field) &&
+                    field.GetString() is { Length: > 0 } value &&
+                    value is not ("Masculino" or "Femenino"))
+                    throw new LendingRuleException("El género debe ser Masculino o Femenino.");
         }
         catch (JsonException)
         {
             throw new LendingRuleException("El formulario detallado no es válido.");
+        }
+        foreach (string location in locations.Distinct(StringComparer.Ordinal))
+        {
+            string[] parts = location.Split('·', 2, StringSplitOptions.TrimEntries);
+            if (parts.Length != 2 || !await db.Municipalities.AsNoTracking().AnyAsync(x =>
+                    x.Name == parts[0] && x.DepartmentName == parts[1], ct))
+                throw new LendingRuleException("Selecciona un municipio válido del catálogo de Colombia.");
         }
         if (request.MonthlyIncome <= 0 || request.MonthlyObligations < 0 ||
             request.MonthlyIncome > 999999999999m || request.MonthlyObligations > 999999999999m)

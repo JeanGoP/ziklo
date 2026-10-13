@@ -244,14 +244,17 @@ function renderNextStep(a, documents, id, panel) {
   }
   const form = document.createElement('form'); form.className = 'study-review';
   form.innerHTML = `<h3>Registrar actuación</h3>
-    <label>Ingresos mensuales verificados<input name="income" type="number" min="0" step="0.01" value="${a.monthlyIncome}"></label>
-    <label>Obligaciones mensuales verificadas<input name="obligations" type="number" min="0" step="0.01" value="${a.monthlyObligations}"></label>
+    <label>Ingresos mensuales verificados<input name="income" type="text" data-money data-min="0" inputmode="decimal" value="${a.monthlyIncome}"></label>
+    <label>Obligaciones mensuales verificadas<input name="obligations" type="text" data-money data-min="0" inputmode="decimal" value="${a.monthlyObligations}"></label>
     <label>Observaciones o motivo<textarea name="notes" maxlength="2000" placeholder="Deja constancia de la revisión"></textarea></label>
     <div class="study-actions"></div>`;
+  ZikloMoney.bind(form);
   const actions = form.querySelector('.study-actions');
   for (const [status, caption] of choices) {
     const button = node('button', caption); button.type = 'button';
     button.addEventListener('click', async () => {
+      ZikloMoney.validateAll(form);
+      if (!form.reportValidity()) return;
       const notes = form.elements.notes.value.trim();
       if (['NeedsInformation','Rejected'].includes(status) && notes.length < 10) {
         $('feedback').textContent = 'Explica el motivo con al menos 10 caracteres.'; return;
@@ -263,8 +266,8 @@ function renderNextStep(a, documents, id, panel) {
         await api(`/api/companies/${companyId}/credit-applications/${id}/reviews`, {
           method:'POST', headers:{'Content-Type':'application/json'},
           body:JSON.stringify({status,notes,
-            verifiedMonthlyIncome: form.elements.income.value === '' ? null : Number(form.elements.income.value),
-            verifiedMonthlyObligations: form.elements.obligations.value === '' ? null : Number(form.elements.obligations.value)})
+            verifiedMonthlyIncome: form.elements.income.value === '' ? null : ZikloMoney.parse(form.elements.income),
+            verifiedMonthlyObligations: form.elements.obligations.value === '' ? null : ZikloMoney.parse(form.elements.obligations)})
         });
         $('feedback').textContent = status === 'NeedsInformation'
           ? a.submittedByUserId

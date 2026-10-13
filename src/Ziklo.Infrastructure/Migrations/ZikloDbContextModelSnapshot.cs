@@ -1195,6 +1195,36 @@ namespace Ziklo.Infrastructure.Migrations
                     b.ToTable("LoanTerms");
                 });
 
+            modelBuilder.Entity("Ziklo.Domain.Municipality", b =>
+                {
+                    b.Property<string>("Code")
+                        .HasMaxLength(5)
+                        .HasColumnType("nchar(5)")
+                        .IsFixedLength();
+
+                    b.Property<string>("DepartmentCode")
+                        .IsRequired()
+                        .HasMaxLength(2)
+                        .HasColumnType("nchar(2)")
+                        .IsFixedLength();
+
+                    b.Property<string>("DepartmentName")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("nvarchar(120)");
+
+                    b.HasKey("Code");
+
+                    b.HasIndex("DepartmentCode", "Name");
+
+                    b.ToTable("Municipalities");
+                });
+
             modelBuilder.Entity("Ziklo.Domain.OutboxMessage", b =>
                 {
                     b.Property<Guid>("CompanyId")

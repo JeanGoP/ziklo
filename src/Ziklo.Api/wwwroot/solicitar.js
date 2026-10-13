@@ -10,6 +10,56 @@ const feedback = document.querySelector('#feedback');
 const submit = document.querySelector('#submit');
 const products = [];
 const money = value => new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP' }).format(value);
+const municipalityFields = new Set([
+  'city', 'appBirthPlace', 'appIssuePlace', 'appWorkCity',
+  'coBirthPlace', 'coIssuePlace', 'coWorkCity'
+]);
+const municipalityByLabel = new Map();
+let municipalitiesLoaded = false;
+const detailMoneyFields = new Set([
+  'appOtherIncome', 'appExpenses', 'appAssets', 'appLiabilities',
+  'appPayrollDeduction', 'appDebtPurchase', 'coIncome', 'coOtherIncome',
+  'coExpenses', 'coAssets', 'coLiabilities'
+]);
+
+function validateMunicipalities() {
+  for (const field of form.querySelectorAll('input[list="municipality-options"]')) {
+    if (field.disabled) continue;
+    const value = field.value.trim();
+    field.setCustomValidity(!value ? '' :
+      !municipalitiesLoaded ? 'El catálogo de municipios aún no está disponible.' :
+      municipalityByLabel.has(value) ? '' : 'Selecciona un municipio de la lista.');
+  }
+}
+
+async function loadMunicipalities() {
+  try {
+    const response = await fetch('/api/municipalities');
+    if (!response.ok) throw new Error('No se pudo cargar el catálogo de municipios.');
+    const places = await response.json();
+    if (!Array.isArray(places) || places.length < 1000)
+      throw new Error('El catálogo de municipios está incompleto.');
+    const list = document.querySelector('#municipality-options');
+    const fragment = document.createDocumentFragment();
+    for (const place of places) {
+      const label = `${place.name} · ${place.departmentName}`;
+      municipalityByLabel.set(label, place);
+      fragment.append(new Option(label, label));
+    }
+    list.replaceChildren(fragment);
+    municipalitiesLoaded = true;
+    validateMunicipalities();
+  } catch (error) { feedback.textContent = error.message; }
+}
+
+form.addEventListener('input', event => {
+  if (!municipalityFields.has(event.target.name)) return;
+  validateMunicipalities();
+  const departmentField = event.target.name === 'appWorkCity' ? 'appWorkDepartment'
+    : event.target.name === 'coWorkCity' ? 'coWorkDepartment' : null;
+  if (departmentField) form.elements[departmentField].value =
+    municipalityByLabel.get(event.target.value.trim())?.departmentName || '';
+});
 
 const steps = [
   ['El crédito que buscas', 'Comienza con las condiciones que necesitas.'],
@@ -50,7 +100,15 @@ function makeField([name, label, type = 'text']) {
   input.name = name;
   input.type = type;
   if (type === 'text' || type === 'email') input.maxLength = 80;
-  if (type === 'number') { input.min = '0'; input.step = '0.01'; }
+  if (type === 'number') {
+    if (detailMoneyFields.has(name)) {
+      input.type = 'text';
+      input.dataset.money = '';
+      input.dataset.min = '0';
+      input.inputMode = 'decimal';
+      input.placeholder = 'Ej. 1.000.000';
+    } else { input.min = '0'; input.step = '1'; }
+  }
   const choices = {
     appCivilStatus: ['Soltero/a', 'Casado/a', 'Unión libre', 'Separado/a', 'Viudo/a'],
     coCivilStatus: ['Soltero/a', 'Casado/a', 'Unión libre', 'Separado/a', 'Viudo/a'],
@@ -62,7 +120,9 @@ function makeField([name, label, type = 'text']) {
     coWorkCategory: ['Asalariado/a', 'Independiente', 'Pensionado/a', 'Socio/a', 'Otro'],
     appContract: ['Indefinido', 'Fijo', 'Prestación de servicios', 'Otro'],
     coContract: ['Indefinido', 'Fijo', 'Prestación de servicios', 'Otro'],
-    coIdType: ['CC', 'CE', 'PAS']
+    coIdType: ['CC', 'CE', 'PAS'],
+    appGender: ['Masculino', 'Femenino'],
+    coGender: ['Masculino', 'Femenino']
   };
   if (choices[name]) {
     const select = document.createElement('select');
@@ -70,7 +130,14 @@ function makeField([name, label, type = 'text']) {
     select.append(new Option('Selecciona una opción', ''));
     choices[name].forEach(value => select.append(new Option(value, value)));
     wrapper.append(caption, select);
-  } else wrapper.append(caption, input);
+  } else {
+    if (municipalityFields.has(name)) {
+      input.setAttribute('list', 'municipality-options');
+      input.placeholder = 'Escribe y selecciona un municipio';
+      input.autocomplete = 'off';
+    }
+    wrapper.append(caption, input);
+  }
   return wrapper;
 }
 
@@ -155,6 +222,7 @@ function updateCodebtor() {
 }
 coChoice.addEventListener('change', updateCodebtor);
 updateCodebtor();
+ZikloMoney.bind(form);
 
 const review = document.createElement('div');
 review.className = 'review-card';
@@ -185,8 +253,13 @@ next.className = 'primary';
 next.textContent = 'Continuar →';
 next.addEventListener('click', () => {
   validatePrimaryEmail();
+  validateMunicipalities();
+  ZikloMoney.validateAll(wizardPages[currentStep]);
   const invalid = wizardPages[currentStep].querySelector(':invalid');
-  if (invalid) { invalid.focus(); invalid.reportValidity(); return; }
+  if (invalid) {
+    invalid.closest('details')?.setAttribute('open', '');
+    invalid.focus(); invalid.reportValidity(); return;
+  }
   showStep(currentStep + 1);
 });
 actions.append(previous, hint, next, submit);
@@ -217,7 +290,7 @@ function renderReview() {
   const lines = [
     ['Solicitante', form.elements.applicantName.value || 'Pendiente'],
     ['Producto', selectedProduct()?.productName || 'Pendiente'],
-    ['Monto', form.elements.requestedAmount.value ? money(form.elements.requestedAmount.value) : 'Pendiente'],
+    ['Monto', form.elements.requestedAmount.value ? money(ZikloMoney.parse(form.elements.requestedAmount)) : 'Pendiente'],
     ['Cuotas', form.elements.requestedInstallments.value || 'Pendiente'],
     ['Codeudor', form.elements.hasCodebtor.value === 'yes' ? form.elements.coName.value || 'Pendiente' : 'No aplica']
   ];
@@ -245,8 +318,9 @@ function showLimits() {
     ? `Monto permitido: ${money(product.minimumAmount)} a ${money(product.maximumAmount)} · ${product.minimumInstallments} a ${product.maximumInstallments} cuotas.`
     : '';
   if (product) {
-    document.querySelector('#amount').min = product.minimumAmount;
-    document.querySelector('#amount').max = product.maximumAmount;
+    document.querySelector('#amount').dataset.min = product.minimumAmount;
+    document.querySelector('#amount').dataset.max = product.maximumAmount;
+    ZikloMoney.validate(document.querySelector('#amount'));
     document.querySelector('#installments').min = product.minimumInstallments;
     document.querySelector('#installments').max = product.maximumInstallments;
   }
@@ -279,6 +353,8 @@ form.addEventListener('submit', async event => {
   event.preventDefault();
   feedback.textContent = '';
   validatePrimaryEmail();
+  validateMunicipalities();
+  ZikloMoney.validateAll(form);
   const invalid = form.querySelector(':invalid');
   if (invalid) {
     const page = invalid.closest('.wizard-page');
@@ -297,7 +373,8 @@ form.addEventListener('submit', async event => {
   for (const name of ['productVersionId', 'identificationType', 'identificationNumber',
     'applicantName', 'email', 'phone', 'city', 'economicActivity', 'monthlyIncome',
     'monthlyObligations', 'requestedAmount', 'requestedInstallments', 'purpose']) {
-    payload.append(name, form.elements[name].value.trim());
+    payload.append(name, form.elements[name].matches('[data-money]')
+      ? ZikloMoney.apiValue(form.elements[name]) : form.elements[name].value.trim());
   }
   const formDetails = {};
   for (const group of window.solicitudCampos)
@@ -358,3 +435,4 @@ document.querySelector('#new-application').addEventListener('click', () => {
 });
 
 loadProducts();
+loadMunicipalities();

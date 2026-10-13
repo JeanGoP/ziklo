@@ -39,19 +39,19 @@
       <div id="versions" class="version-list"></div>
       <form id="create-version" class="product-form">
         <div class="field-grid">
-          <label>Monto mínimo<input name="minimumAmount" type="number" min="1" step="0.01" required></label>
-          <label>Monto máximo<input name="maximumAmount" type="number" min="1" step="0.01" required></label>
+          <label>Monto mínimo<input name="minimumAmount" type="text" data-money data-min="1" inputmode="decimal" required></label>
+          <label>Monto máximo<input name="maximumAmount" type="text" data-money data-min="1" inputmode="decimal" required></label>
           <label>Cuotas mínimas<input name="minimumInstallments" type="number" min="1" step="1" required></label>
           <label>Cuotas máximas<input name="maximumInstallments" type="number" min="1" step="1" required></label>
-          <label>Tasa (%)<input name="rate" type="number" min="0" step="0.0001" required><small>Porcentaje según el tipo de tasa elegido.</small></label>
+          <label>Tasa (%)<input name="rate" type="text" data-money data-decimals="4" data-min="0" inputmode="decimal" required><small>Porcentaje según el tipo de tasa elegido.</small></label>
           <label>Tipo de tasa<select name="rateKind" required><option value="PeriodicEffective">Efectiva por período</option><option value="EffectiveAnnual">Efectiva anual</option><option value="NominalAnnual">Nominal anual</option><option value="PeriodicSimple">Simple por período</option><option value="AnnualSimple">Simple anual</option></select></label>
           <label>Frecuencia de pago<select name="frequency" required><option value="Monthly">Mensual</option><option value="Every15Days">Cada 15 días</option><option value="SemiMonthly">Quincenal fija</option><option value="Weekly">Semanal</option><option value="Daily">Diaria</option><option value="Quarterly">Trimestral</option><option value="SemiAnnual">Semestral</option><option value="Annual">Anual</option></select></label>
           <label>Amortización<select name="method" required><option value="French">Cuota fija</option><option value="FixedPrincipal">Abono fijo a capital</option><option value="SimplePeriodic">Interés simple periódico</option><option value="Bullet">Pago único</option></select></label>
           <label>Base de días<select name="dayCount" required><option value="Actual365Fixed">Actual / 365</option><option value="Actual360">Actual / 360</option><option value="ActualActual">Actual / actual</option></select></label>
           <label>Vigente desde<input name="validFrom" type="date" required></label>
-          <label>Seguro por cuota<input name="insurancePerInstallment" type="number" min="0" step="0.01" value="0" required></label>
-          <label>Otros cargos por cuota<input name="otherChargePerInstallment" type="number" min="0" step="0.01" value="0" required></label>
-          <label>Tasa de mora anual (%)<input name="lateAnnualRate" type="number" min="0" step="0.0001" value="0" required></label>
+          <label>Seguro por cuota<input name="insurancePerInstallment" type="text" data-money data-min="0" inputmode="decimal" value="0" required></label>
+          <label>Otros cargos por cuota<input name="otherChargePerInstallment" type="text" data-money data-min="0" inputmode="decimal" value="0" required></label>
+          <label>Tasa de mora anual (%)<input name="lateAnnualRate" type="text" data-money data-decimals="4" data-min="0" inputmode="decimal" value="0" required></label>
           <label>Días de gracia para mora<input name="lateGraceDays" type="number" min="0" step="1" value="0" required></label>
         </div>
         <button class="primary" type="submit">Publicar condiciones</button>
@@ -59,6 +59,7 @@
     </section>
   </main>
   <script src="session.js?v=12"></script>
-  <script src="productos.js?v=1"></script>
+  <script src="money-input.js?v=1"></script>
+  <script src="productos.js?v=2"></script>
 </body>
 </html>

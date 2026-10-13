@@ -159,6 +159,14 @@ public sealed class CreditProduct : CompanyRecord
     public byte[] Version { get; set; } = [];
 }
 
+public sealed class Municipality
+{
+    public string Code { get; set; } = string.Empty;
+    public string Name { get; set; } = string.Empty;
+    public string DepartmentCode { get; set; } = string.Empty;
+    public string DepartmentName { get; set; } = string.Empty;
+}
+
 public sealed class ProductVersion : CompanyRecord
 {
     public Guid ProductId { get; set; }

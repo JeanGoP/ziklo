@@ -60,7 +60,7 @@
             <p class="hint">Selecciona abajo una o varias cuotas exigibles. Puedes ajustar el valor recibido para hacer un pago parcial. La mora puede cambiar hasta el registro.</p>
             <form id="payment-form" class="payment-form">
               <div class="field"><label for="payment-date">Fecha efectiva</label><input id="payment-date" type="date" required></div>
-              <div class="field"><label for="payment-amount">Valor recibido</label><input id="payment-amount" type="number" min="0.01" step="0.01" inputmode="decimal" required></div>
+              <div class="field"><label for="payment-amount">Valor recibido</label><input id="payment-amount" type="text" data-money data-min="0.01" inputmode="decimal" placeholder="Ej. 350.000" required></div>
               <div class="field"><label for="payment-method">Medio de pago</label><select id="payment-method"><option>Efectivo</option><option>Transferencia</option><option>PSE</option><option>Tarjeta</option><option>Consignación</option><option>Otro</option></select></div>
               <div class="field"><label for="payment-reference">Referencia</label><input id="payment-reference" maxlength="120" required></div>
               <p id="selected-installments" class="selection-summary" aria-live="polite">Ninguna cuota seleccionada.</p>
@@ -86,6 +86,7 @@
     <button id="print-receipt" type="button">Imprimir comprobante</button>
   </dialog>
   <script src="session.js?v=12"></script>
-  <script src="recaudos.js?v=5"></script>
+  <script src="money-input.js?v=1"></script>
+  <script src="recaudos.js?v=6"></script>
 </body>
 </html>
