@@ -364,11 +364,14 @@ $('refresh').addEventListener('click', () => Promise.all([loadList(), loadMyAler
 $('more').addEventListener('click', () => loadList(false).catch(error => $('feedback').textContent = error.message));
 (async () => {
   try {
-    const profile = await api('/api/auth/me');
+    const session = await window.zikloAccessReady;
+    const profile = session?.profile || await api('/api/auth/me');
     currentUserId = profile.id;
     companyId = profile.companies[0]?.companyId;
     if (!companyId) throw new Error('No tienes una empresa activa para revisar solicitudes.');
-    permissions = await api(`/api/companies/${companyId}/my-permissions`);
+    permissions = session?.permissions
+      ? [...session.permissions]
+      : await api(`/api/companies/${companyId}/my-permissions`);
     $('workspace').hidden = false;
     await Promise.all([loadList(), loadMyAlerts()]);
     setInterval(() => {

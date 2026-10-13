@@ -268,7 +268,8 @@ el('password-form').addEventListener('submit', async event => {
 
 (async () => {
   try {
-    const profile = await api('/api/auth/me');
+    const session = await window.zikloAccessReady;
+    const profile = session?.profile || await api('/api/auth/me');
     currentUserId = profile.id;
     companyId = profile.companies[0]?.companyId;
     if (!companyId) throw new Error('No tienes una empresa activa.');

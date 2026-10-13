@@ -9,6 +9,8 @@ src/Ziklo.Api/demo-data/
 *.log
 .env
 .env.*
+!.env.example
+!src/Ziklo.Api/.env.example
 *.pfx
 *.pem
 *.key

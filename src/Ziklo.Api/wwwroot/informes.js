@@ -132,7 +132,8 @@ el('print-report').disabled = true;
 
 (async () => {
   try {
-    const profile = await (await request('/api/auth/me')).json();
+    const session = await window.zikloAccessReady;
+    const profile = session?.profile || await (await request('/api/auth/me')).json();
     companies = profile.companies || [];
     if (!companies.length) throw new Error('No hay empresas disponibles.');
     el('company').replaceChildren(...companies.map(company => {

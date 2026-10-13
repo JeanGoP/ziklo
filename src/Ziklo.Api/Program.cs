@@ -12,12 +12,14 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Ziklo.Api;
 using Ziklo.Application;
 using Ziklo.Domain;
 using Ziklo.FinancialEngine;
 using Ziklo.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+DotEnvConfiguration.Load(builder.Configuration, builder.Environment.ContentRootPath);
 builder.Services.ConfigureHttpJsonOptions(options =>
     options.SerializerOptions.Converters.Add(new JsonStringEnumConverter()));
 builder.Services.AddSingleton<LoanSimulator>();
@@ -55,6 +57,10 @@ bool demoMode = builder.Environment.IsDevelopment() &&
 if (demoMode && (!string.IsNullOrWhiteSpace(connectionString) ||
     !string.IsNullOrWhiteSpace(jwtKey)))
     throw new InvalidOperationException("El modo demo no puede combinarse con SQL Server ni JWT.");
+if (!demoMode && (string.IsNullOrWhiteSpace(connectionString) ||
+    string.IsNullOrWhiteSpace(jwtKey)))
+    throw new InvalidOperationException(
+        "Configura ConnectionStrings__Ziklo y ZIKLO_JWT_KEY antes de iniciar Ziklo.");
 if (demoMode)
 {
     string dataDirectory = Path.Combine(builder.Environment.ContentRootPath, "demo-data");

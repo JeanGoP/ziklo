@@ -69,7 +69,8 @@ function emptyRow(body, columns, message) {
 
 async function initialize() {
   try {
-    const profile = await (await request('/api/auth/me')).json();
+    const session = await window.zikloAccessReady;
+    const profile = session?.profile || await (await request('/api/auth/me')).json();
     companies = profile.companies || [];
     if (!companies.length) throw new Error('Tu usuario no tiene empresas activas asignadas.');
     el('company').replaceChildren(...companies.map(company => {

@@ -90,7 +90,7 @@ async function checkPageAccess() {
   const company = profile.companies?.[0];
   if (!company) {
     showSessionIdentity(profile, null);
-    return;
+    return {profile, permissions: new Set()};
   }
   const permissionResponse = await fetch(
     `/api/companies/${encodeURIComponent(company.companyId)}/my-permissions`,
@@ -119,6 +119,7 @@ async function checkPageAccess() {
   }
   showSessionIdentity(profile, company);
   if (permissions.has('ViewLoans')) startAlertBadge(company.companyId, headers);
+  return {profile, permissions};
 }
 
 window.zikloAccessReady = checkPageAccess();

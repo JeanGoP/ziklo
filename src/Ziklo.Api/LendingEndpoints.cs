@@ -27,10 +27,16 @@ internal static class LendingEndpoints
                     var db = http.RequestServices.GetRequiredService<ZikloDbContext>();
                     db.AuditActorUserId = userId;
                     db.AuditIpAddress = http.Connection.RemoteIpAddress?.ToString() ?? string.Empty;
-                    var membership = await db.UserCompanies.AsNoTracking().SingleOrDefaultAsync(x =>
-                        x.CompanyId == companyId && x.UserId == userId && x.IsActive);
-                    if (membership is null || !await db.Companies.AnyAsync(c => c.Id == companyId && c.IsActive) ||
-                        !await db.Users.AnyAsync(u => u.Id == userId && u.IsActive)) return Results.Forbid();
+                    var membership = await (
+                        from entry in db.UserCompanies.AsNoTracking()
+                        join company in db.Companies.AsNoTracking()
+                            on entry.CompanyId equals company.Id
+                        join user in db.Users.AsNoTracking()
+                            on entry.UserId equals user.Id
+                        where entry.CompanyId == companyId && entry.UserId == userId &&
+                            entry.IsActive && company.IsActive && user.IsActive
+                        select entry).SingleOrDefaultAsync();
+                    if (membership is null) return Results.Forbid();
                     if (membership.ProfileId is Guid profileId)
                     {
                         var profile = await db.AccessProfiles.AsNoTracking()
@@ -39,10 +45,11 @@ internal static class LendingEndpoints
                         if (profile is null) return Results.Forbid();
                         http.Items["profilePermissions"] = profile.PermissionMask;
                     }
+                    else
+                        http.Items["companyPermissions"] = await db.CompanyRolePermissions.AsNoTracking()
+                            .Where(x => x.CompanyId == companyId && x.Role == membership.Role)
+                            .ToDictionaryAsync(x => x.Permission, x => x.Allowed);
                     http.Items["companyRole"] = membership.Role;
-                    http.Items["companyPermissions"] = await db.CompanyRolePermissions.AsNoTracking()
-                        .Where(x => x.CompanyId == companyId && x.Role == membership.Role)
-                        .ToDictionaryAsync(x => x.Permission, x => x.Allowed);
                     return await next(context);
                 }
                 catch (LendingRuleException error)

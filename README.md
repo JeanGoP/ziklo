@@ -59,9 +59,9 @@ En el entorno de desarrollo sin acceso a NuGet se puede restaurar desde la cach�
 
 ## Habilitar la operación con SQL Server
 
-El modo local es exclusivo del entorno `Development`; no admite combinarlo con SQL Server ni una clave JWT externa. Para usar SQL Server, establece `Ziklo__DemoMode=false`, configura `ConnectionStrings__Ziklo` con una conexión a SQL Server y `ZIKLO_JWT_KEY` con una clave aleatoria de al menos 32 bytes UTF-8. El mismo formulario de ingreso funciona con SQL Server. No se incluye ninguna credencial predeterminada para SQL Server.
+El modo local es exclusivo del entorno `Development`; no admite combinarlo con SQL Server ni una clave JWT externa. Para usar SQL Server, copia una sola vez `src/Ziklo.Api/.env.example` como `.env` junto a `Ziklo.Api.dll` en el servidor y sustituye los valores de `ConnectionStrings__Ziklo` y `ZIKLO_JWT_KEY` (clave aleatoria de al menos 32 bytes UTF-8). El backend lee ese archivo al iniciar; las variables de entorno de Windows tienen prioridad si están configuradas. El archivo `.env` está excluido de Git y de futuras publicaciones. Al actualizar el backend, no copies ni reemplaces el `.env` del servidor. Debe quedar accesible solo para la cuenta que ejecuta la aplicación. No se incluye ninguna credencial predeterminada para SQL Server. En una publicación normal, .NET usa `Production` por defecto; el entorno de ASP.NET se configura en Windows o IIS, no dentro de `.env`.
 
-Para aprovisionar la primera empresa y usuario administrador, configura temporalmente `ZIKLO_SEED_EMAIL`, `ZIKLO_SEED_PASSWORD` (mínimo 12 caracteres), `ZIKLO_SEED_COMPANY_NAME` y `ZIKLO_SEED_TAX_ID`, y ejecuta:
+Para aprovisionar la primera empresa y usuario administrador, completa temporalmente en `.env` `ZIKLO_SEED_EMAIL`, `ZIKLO_SEED_PASSWORD` (mínimo 12 caracteres), `ZIKLO_SEED_COMPANY_NAME` y `ZIKLO_SEED_TAX_ID`, y ejecuta desde la carpeta publicada `dotnet Ziklo.Api.dll --seed-admin`. Después borra esas cuatro líneas del archivo. Al trabajar desde el código fuente, también puedes configurarlas como variables de entorno y ejecutar:
 
 ```powershell
 dotnet run --project src/Ziklo.Api --no-restore -- --seed-admin
