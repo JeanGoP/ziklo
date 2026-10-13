@@ -87,7 +87,7 @@ async function loadMyAlerts() {
     list.append(node('small', `Hay ${result.total - result.items.length} avisos más. Busca el radicado en la bandeja.`, 'study-muted'));
 }
 
-function renderNextStep(a, documents, id, panel) {
+function renderNextStep(a, documents, reviews, id, panel) {
   const guidance = {
     Submitted: 'Radicada. Está en la bandeja compartida. Un analista debe iniciar el estudio.',
     InReview: 'En estudio. El analista revisa datos y soportes; un aprobador distinto registra la decisión.',
@@ -230,15 +230,21 @@ function renderNextStep(a, documents, id, panel) {
 
   const canStudy = permissions.includes('StudyApplications');
   const canDecide = permissions.includes('ApproveLoan');
+  const studiedByCurrentUser = reviews.some(review =>
+    String(review.actorUserId).toLowerCase() === String(currentUserId).toLowerCase());
+  if (a.status === 'InReview' && canDecide && studiedByCurrentUser)
+    section.append(node('p',
+      'Ya registraste una actuación en esta solicitud. Por separación de funciones, otro usuario con permiso de aprobación debe aprobarla o rechazarla.',
+      'study-decision-notice'));
   const choices = a.status === 'InReview'
     ? [
         ...(canStudy ? [['NeedsInformation','Solicitar información']] : []),
-        ...(canDecide ? [['Approved','Aprobar'],['Rejected','Rechazar']] : [])
+        ...(canDecide && !studiedByCurrentUser ? [['Approved','Aprobar'],['Rejected','Rechazar']] : [])
       ]
     : ['Submitted','NeedsInformation'].includes(a.status) && canStudy
       ? [['InReview','Iniciar o retomar estudio']] : [];
   if (!choices.length) {
-    if (['Submitted','InReview','NeedsInformation'].includes(a.status))
+    if (!studiedByCurrentUser && ['Submitted','InReview','NeedsInformation'].includes(a.status))
       section.append(node('small', 'Tu perfil puede consultar esta solicitud, pero no tiene acciones disponibles en este estado.', 'study-muted'));
     return;
   }
@@ -250,14 +256,18 @@ function renderNextStep(a, documents, id, panel) {
     <div class="study-actions"></div>`;
   ZikloMoney.bind(form);
   const actions = form.querySelector('.study-actions');
+  const actionFeedback = node('p', '', 'study-action-feedback');
+  actionFeedback.setAttribute('role', 'alert');
+  form.append(actionFeedback);
   for (const [status, caption] of choices) {
     const button = node('button', caption); button.type = 'button';
     button.addEventListener('click', async () => {
+      actionFeedback.textContent = '';
       ZikloMoney.validateAll(form);
       if (!form.reportValidity()) return;
       const notes = form.elements.notes.value.trim();
       if (['NeedsInformation','Rejected'].includes(status) && notes.length < 10) {
-        $('feedback').textContent = 'Explica el motivo con al menos 10 caracteres.'; return;
+        actionFeedback.textContent = 'Explica el motivo con al menos 10 caracteres.'; return;
       }
       if (['Approved','Rejected'].includes(status) &&
           !confirm(`¿Confirmas la decisión: ${labels[status]}?`)) return;
@@ -275,7 +285,10 @@ function renderNextStep(a, documents, id, panel) {
             : 'Se registró la solicitud de información. Esta solicitud no tiene radicador identificado; contacta al solicitante por el canal acordado.'
           : 'Actuación registrada.';
         await loadList(); await showDetail(id);
-      } catch (error) { $('feedback').textContent = error.message; button.disabled = false; }
+      } catch (error) {
+        actionFeedback.textContent = error.message;
+        button.disabled = false;
+      }
     });
     actions.append(button);
   }
@@ -293,7 +306,7 @@ async function showDetail(id) {
   summary.append(node('span', labels[a.status] || a.status, 'study-badge'),
     node('span', new Date(a.createdAtUtc).toLocaleString('es-CO'), 'study-muted'));
   panel.append(summary);
-  renderNextStep(a, data.documents, id, panel);
+  renderNextStep(a, data.documents, data.reviews, id, panel);
   const print = document.createElement('a');
   print.href = `/solicitud-impresa.html?radicado=${encodeURIComponent(a.reference)}`;
   print.target = '_blank'; print.rel = 'noopener';

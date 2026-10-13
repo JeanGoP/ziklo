@@ -23,6 +23,8 @@
 .study-next h3,.study-next p{margin:0}
 .study-next p{color:#365273;line-height:1.5}
 .study-next .study-review{margin-top:6px}
+.study-next .study-decision-notice{font-weight:650;color:#7b3e13}
+.study-action-feedback{min-height:1.3em;margin:0;color:#b42318;font-weight:650}
 .study-badge{padding:5px 9px;border:1px solid #b7d0f5;border-radius:4px;background:#edf4ff;color:#1f5baa;font-size:12px}
 .study-facts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:20px 0}
 .study-facts div{padding:12px;border:1px solid var(--line);border-radius:5px;overflow-wrap:anywhere}
