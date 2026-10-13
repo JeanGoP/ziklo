@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ziklo | Informes</title>
+  <link rel="icon" type="image/svg+xml" href="/brand/ziklo-symbol.svg">
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="informes.css">
+  <link rel="stylesheet" href="theme.css?v=4">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/"><img class="brand-logo" src="/brand/ziklo-logo-light.svg" alt="Ziklo"><small>operación</small></a>
+    <nav><a href="/">Simulador</a><a href="/solicitar.html">Solicitar crédito</a><a href="/solicitudes.html">Estudio</a><a href="/dashboard.html">Panel</a><a href="/clientes.html">Clientes</a><a href="/recaudos.html">Recaudos</a><span aria-current="page">Informes</span><a href="/usuarios.html">Usuarios</a></nav>
+  </header>
+  <main class="container">
+    <section class="intro">
+      <div class="eyebrow">Análisis de cartera</div>
+      <h1>Informes</h1>
+      <p>Consulta los indicadores y descarga el detalle en Excel o CSV. Usa «Imprimir / PDF» para guardar el informe visible.</p>
+    </section>
+    <section class="panel" id="error-panel" hidden><h2>No se pudieron abrir los informes</h2><p id="error-detail"></p></section>
+    <section id="workspace" hidden>
+      <div class="panel report-controls">
+        <label>Empresa<select id="company"></select></label>
+        <label>Informe<select id="kind">
+          <option value="portfolio">Cartera general</option>
+          <option value="overdue">Cartera vencida</option>
+          <option value="aging">Cartera por edades</option>
+          <option value="delinquent-clients">Clientes morosos</option>
+          <option value="payments">Recaudos</option>
+          <option value="interest">Intereses y mora</option>
+          <option value="disbursements">Préstamos desembolsados</option>
+          <option value="paid-off">Préstamos cancelados</option>
+          <option value="promises">Promesas de pago</option>
+        </select></label>
+        <label>Desde<input id="from" type="date"></label>
+        <label>Hasta<input id="to" type="date"></label>
+        <button class="primary" id="generate" type="button">Generar</button>
+      </div>
+      <p id="feedback" class="feedback" role="status" aria-live="polite"></p>
+      <section class="panel report-result" aria-labelledby="report-title">
+        <div class="report-heading">
+          <div><div class="eyebrow">Informe generado</div><h2 id="report-title">Selecciona un informe</h2><p id="report-period"></p></div>
+          <span id="row-count" class="pill">0 registros</span>
+        </div>
+        <p id="report-note" class="report-note"></p>
+        <div class="report-actions">
+          <button id="download-xlsx" type="button">Descargar Excel</button>
+          <button id="download-csv" type="button">Descargar CSV</button>
+          <button id="print-report" type="button">Imprimir / PDF</button>
+        </div>
+        <div class="table-wrap"><table><thead id="report-head"></thead><tbody id="report-body"></tbody></table></div>
+      </section>
+      <p class="scope-note">Los informes muestran operaciones y saldos registrados. La rentabilidad, condonaciones y refinanciaciones se incorporarán cuando existan esos flujos en el sistema.</p>
+    </section>
+  </main>
+  <script src="session.js?v=9"></script>
+  <script src="informes.js?v=2"></script>
+</body>
+</html>

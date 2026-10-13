@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ziklo | Usuarios y perfiles</title>
+  <link rel="icon" type="image/svg+xml" href="/brand/ziklo-symbol.svg">
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="theme.css?v=4">
+  <link rel="stylesheet" href="usuarios.css?v=2">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/"><img class="brand-logo" src="/brand/ziklo-logo-light.svg" alt="Ziklo"><small>administración</small></a>
+    <nav><a href="/">Simulador</a><a href="/solicitudes.html">Solicitudes</a><a href="/dashboard.html">Panel</a><a href="/clientes.html">Clientes</a><a href="/recaudos.html">Recaudos</a><a href="/informes.html">Informes</a><span aria-current="page">Usuarios</span></nav>
+  </header>
+  <main class="container">
+    <section class="intro"><div class="eyebrow">Administración</div><h1>Usuarios y perfiles</h1><p>Asigna responsabilidades distintas a quienes originan, estudian, aprueban y desembolsan créditos.</p></section>
+    <p id="feedback" class="feedback" role="status" aria-live="polite"></p>
+    <div id="workspace" hidden>
+      <section class="panel"><div class="section-top"><div><div class="eyebrow">Accesos</div><h2>Perfiles disponibles</h2></div><button id="new-profile" class="primary" type="button">Crear perfil</button></div><div id="roles" class="role-grid"></div></section>
+      <div class="users-grid">
+        <section class="panel"><div class="section-top"><div><div class="eyebrow">Equipo</div><h2>Usuarios</h2></div></div><div id="users" class="user-list"></div></section>
+        <section class="panel"><div class="section-top"><div><div class="eyebrow">Nuevo acceso</div><h2>Crear usuario</h2></div></div>
+          <form id="create-user" class="user-form">
+            <label>Correo electrónico<input name="email" type="email" autocomplete="off" required maxlength="250" placeholder="persona@empresa.com"></label>
+            <label>Perfil<select name="role" required></select></label>
+            <label>Contraseña inicial<input name="password" type="password" autocomplete="new-password" required minlength="12" maxlength="128"></label>
+            <p class="hint">Comparte la contraseña por un canal privado. El administrador puede cambiarla después.</p>
+            <button class="primary" type="submit">Crear usuario</button>
+          </form>
+        </section>
+      </div>
+    </div>
+  </main>
+  <dialog id="profile-dialog" class="panel role-dialog"><form id="profile-form" class="user-form"><h2 id="profile-title">Crear perfil</h2><label>Nombre del perfil<input name="name" type="text" required minlength="3" maxlength="100" placeholder="Ej. Comité de crédito"></label><div><strong class="permission-heading">Permisos</strong><div id="custom-permissions" class="permission-list"></div></div><label class="active-option"><input name="active" type="checkbox" checked> Perfil activo</label><div class="user-actions"><button class="primary" type="submit">Guardar perfil</button><button id="cancel-profile" type="button">Cancelar</button></div></form></dialog>
+  <dialog id="role-dialog" class="panel role-dialog"><div class="section-top"><h2 id="role-title">Permisos del perfil</h2><button id="close-role" type="button">Cerrar</button></div><p class="hint">Los cambios se guardan al activar o desactivar cada permiso.</p><div id="permission-list" class="permission-list"></div></dialog>
+  <dialog id="password-dialog" class="panel password-dialog"><form id="password-form" class="user-form"><h2>Cambiar contraseña</h2><p id="password-for" class="hint"></p><label>Nueva contraseña<input name="password" type="password" required minlength="12" maxlength="128" autocomplete="new-password"></label><div class="user-actions"><button class="primary" type="submit">Guardar contraseña</button><button id="cancel-password" type="button">Cancelar</button></div></form></dialog>
+  <script src="session.js?v=9"></script>
+  <script src="usuarios.js?v=4"></script>
+</body>
+</html>

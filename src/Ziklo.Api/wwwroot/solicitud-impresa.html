@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Solicitud de crédito | Ziklo</title>
+  <link rel="icon" type="image/svg+xml" href="/brand/ziklo-symbol.svg">
+  <link rel="stylesheet" href="solicitud-impresa.css">
+</head>
+<body>
+  <div class="toolbar"><a href="/solicitar.html">← Volver al formulario</a><button id="print" type="button">Imprimir / guardar PDF</button></div>
+  <p id="error" role="alert"></p>
+  <main id="document" hidden>
+    <section class="page">
+      <header class="sheet-header"><div class="company"><img src="/brand/ziklo-symbol.svg" alt=""><div><strong id="company-name"></strong><small id="company-tax"></small></div></div><div class="document-title"><strong>SOLICITUD DE CRÉDITO</strong><small id="date"></small><small id="reference"></small></div></header>
+      <div class="demo-mark">AUTORIZACIONES LEGALES PENDIENTES</div>
+      <div id="applicant-core"></div>
+      <div id="applicant-details"></div>
+      <footer>Página 1 de 2 · Solicitud generada por Ziklo</footer>
+    </section>
+    <section class="page">
+      <header class="sheet-header compact"><div class="company"><img src="/brand/ziklo-symbol.svg" alt=""><div><strong id="company-name-2"></strong><small>Solicitud de crédito · continuación</small></div></div><div class="document-title"><small id="reference-2"></small></div></header>
+      <div id="codebtor-details"></div>
+      <section class="legal"><h2>AUTORIZACIÓN PARA CONSULTAR, REPORTAR Y NOTIFICAR EN CENTRALES DE RIESGO</h2><p id="risk-text"></p></section>
+      <section class="legal"><h2>AUTORIZACIÓN DE DATOS PERSONALES</h2><p id="privacy-text"></p></section>
+      <p class="legal-note">Los textos de autorización y la política de tratamiento de datos están pendientes de aprobación. Este formato aún no habilita el uso con clientes reales.</p>
+      <div class="signatures"><div><span>Firma deudor</span><small>C. C. __________________________</small></div><div><span>Huella</span></div><div><span>Firma codeudor</span><small>C. C. __________________________</small></div><div><span>Huella</span></div></div>
+      <footer>Página 2 de 2 · Solicitud generada por Ziklo</footer>
+    </section>
+  </main>
+  <script src="solicitud-campos.js?v=2"></script>
+  <script src="solicitud-impresa.js?v=3"></script>
+</body>
+</html>

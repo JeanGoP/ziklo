@@ -1,0 +1,16 @@
+**/bin/
+**/obj/
+artifacts/
+**/artifacts/
+output/
+tmp/
+src/Ziklo.Api/demo-data/
+*.log
+.env
+.env.*
+*.pfx
+*.pem
+*.key
+*.db
+*.sqlite
+*.bak

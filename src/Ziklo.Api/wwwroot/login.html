@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ziklo | Ingresar</title>
+  <link rel="icon" type="image/svg+xml" href="/brand/ziklo-symbol.svg">
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="theme.css?v=3">
+  <style>.login-shell{max-width:490px;margin:7vh auto}.login-shell .panel{padding:32px}.login-shell form{display:grid;gap:16px}.login-shell label{display:grid;gap:7px;color:#40516a;font-size:12px;font-weight:650}.login-shell input{height:44px;border:1px solid #c5d2e2;border-radius:6px;background:#fff;color:#0a0f1e;padding:0 12px}.login-shell .primary{width:100%}.login-shell .hint{line-height:1.5}.login-shell [hidden]{display:none}</style>
+</head>
+<body>
+  <header class="topbar"><a class="brand" href="/"><img class="brand-logo" src="/brand/ziklo-logo-light.svg" alt="Ziklo"></a></header>
+  <main class="container login-shell">
+    <section class="panel"><div class="eyebrow">Acceso al equipo</div><h1 id="login-title">Ingresa a Ziklo</h1><p id="login-hint" class="hint">Usa el correo y la contraseña asignados por el administrador.</p>
+      <form id="login-form"><label>Correo electrónico<input name="email" type="email" required autocomplete="username"></label><label>Contraseña<input name="password" type="password" required autocomplete="current-password"></label><button class="primary" type="submit">Ingresar</button></form>
+      <form id="setup-form" hidden><label>Correo del administrador<input name="email" type="email" required autocomplete="username"></label><label>Crear contraseña<input name="password" type="password" minlength="12" maxlength="200" required autocomplete="new-password"></label><label>Confirmar contraseña<input name="confirmation" type="password" minlength="12" maxlength="200" required autocomplete="new-password"></label><button class="primary" type="submit">Crear acceso e ingresar</button></form>
+      <p id="feedback" class="feedback" role="alert"></p>
+      <p class="hint"><a href="/manual.html">Ver manual del ciclo de crédito</a></p>
+    </section>
+  </main>
+  <script src="login.js?v=2"></script>
+</body>
+</html>

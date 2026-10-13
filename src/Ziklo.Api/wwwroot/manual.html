@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ziklo | Manual del ciclo de crédito</title>
+  <link rel="icon" type="image/svg+xml" href="/brand/ziklo-symbol.svg">
+  <link rel="stylesheet" href="manual.css?v=1">
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="/"><img src="/brand/ziklo-logo-light.svg" alt="Ziklo"></a>
+    <nav aria-label="Navegación principal"><a href="/login.html?next=%2Fmanual.html">Ingresar</a><a href="/solicitudes.html">Abrir Ziklo</a></nav>
+  </header>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-title">Manual de uso <span>v1.0</span></div>
+      <nav aria-label="Contenido del manual">
+        <a href="#inicio">Cómo usarlo</a>
+        <a href="#roles">Usuarios y responsabilidades</a>
+        <a href="#preparacion">0. Preparar accesos</a>
+        <a href="#radicacion">1. Radicar solicitud</a>
+        <a href="#estudio">2. Estudiar solicitud</a>
+        <a href="#subsanacion">3. Pedir y aportar información</a>
+        <a href="#decision">4. Registrar decisión</a>
+        <a href="#prestamo">5. Crear préstamo</a>
+        <a href="#desembolso">6. Registrar desembolso</a>
+        <a href="#verificacion">7. Verificar resultado</a>
+      </nav>
+      <p>Ejemplo completo con datos ficticios. Cada operación real debe seguir las políticas de la empresa.</p>
+    </aside>
+    <main id="inicio">
+      <section class="hero">
+        <div class="eyebrow">GUÍA OPERATIVA · ZIKLO</div>
+        <h1>De la solicitud al desembolso</h1>
+        <p>Un recorrido paso a paso para que cada persona sepa qué recibe, qué debe hacer y a quién le corresponde el siguiente paso.</p>
+        <div class="hero-actions"><a class="button button-primary" href="#roles">Empezar el recorrido</a><a class="button button-outline" href="/login.html?next=%2Fmanual.html">Ingresar a Ziklo</a></div>
+      </section>
+
+      <section class="notice" aria-label="Cómo funcionan las vistas">
+        <strong>Pantallas del sistema en vivo</strong>
+        <p>Las vistas de esta guía muestran las páginas actuales de Ziklo. Para ver las pantallas internas, ingresa desde este mismo manual. Cada perfil solo podrá abrir las funciones autorizadas. Las vistas son de consulta; usa «Abrir pantalla» para trabajar.</p>
+      </section>
+
+      <section id="roles" class="section">
+        <div class="section-heading"><span class="step-index">00</span><div><div class="eyebrow">ANTES DE COMENZAR</div><h2>Quién hace cada parte</h2></div></div>
+        <div class="role-grid">
+          <article class="role-card"><span class="role-badge">ADMINISTRACIÓN</span><h3>Administrador</h3><p>Crea usuarios y asigna los perfiles necesarios para separar las funciones.</p></article>
+          <article class="role-card"><span class="role-badge">ORIGINACIÓN</span><h3>Radicador</h3><p>Registra la solicitud y responde cuando el analista pide información adicional.</p></article>
+          <article class="role-card"><span class="role-badge">ANÁLISIS</span><h3>Analista de crédito</h3><p>Recibe los radicados en una bandeja compartida, estudia el caso y deja sus observaciones.</p></article>
+          <article class="role-card"><span class="role-badge">DECISIÓN</span><h3>Aprobador</h3><p>Registra la aprobación o el rechazo. Debe ser una persona distinta de quien intervino en el estudio.</p></article>
+          <article class="role-card"><span class="role-badge">DESEMBOLSO</span><h3>Caja</h3><p>Adjunta el contrato firmado y registra el desembolso una vez comprobada la entrega de fondos.</p></article>
+        </div>
+        <div class="example"><strong>Usuarios para seguir el ejemplo</strong><p>Usa cuentas de prueba creadas por tu administrador para Radicador, Analista, Aprobador y Caja. Cambia de sesión al pasar de un perfil al siguiente. Los correos y contraseñas dependen de las cuentas creadas en tu instalación.</p></div>
+      </section>
+
+      <section id="preparacion" class="section">
+        <div class="section-heading"><span class="step-index">01</span><div><div class="eyebrow">ADMINISTRADOR</div><h2>Preparar accesos</h2></div></div>
+        <ol class="instructions"><li>Ingresa con el usuario administrador.</li><li>Abre <strong>Usuarios</strong> y crea una cuenta para cada persona que participará en el recorrido.</li><li>Asigna los perfiles Radicador, Analista de crédito, Aprobador y Caja a sus respectivas cuentas. Comprueba que cada usuario ve solo las opciones que le corresponden.</li></ol>
+        <div class="preview" data-protected><div class="preview-bar"><span>Usuarios · administración de accesos</span><a href="/usuarios.html">Abrir pantalla ↗</a></div><div class="preview-body"><iframe title="Vista en vivo de Usuarios" data-live-src="/usuarios.html" loading="lazy" tabindex="-1"></iframe><div class="preview-message">Ingresa a Ziklo para cargar esta vista.</div></div></div>
+      </section>
+
+      <section id="radicacion" class="section">
+        <div class="section-heading"><span class="step-index">02</span><div><div class="eyebrow">RADICADOR</div><h2>Radicar la solicitud</h2></div></div>
+        <ol class="instructions"><li>Ingresa con la cuenta del Radicador y abre <strong>Solicitar crédito</strong>.</li><li>Completa los seis pasos: crédito solicitado, datos personales, actividad e ingresos, referencias, codeudor si aplica, y revisión.</li><li>Revisa los datos antes de enviar. Al radicar, anota el número que empieza por <code>SOL-</code>. Puedes abrir la versión imprimible de la solicitud.</li></ol>
+        <div class="example"><strong>Ejemplo de práctica</strong><p>Solicitante ficticia: Laura Gómez Prueba. Producto: préstamo personal. Monto: $1.000.000 COP. Plazo: 12 cuotas. Conserva el radicado generado para encontrar el caso en la bandeja.</p></div>
+        <div class="preview"><div class="preview-bar"><span>Solicitar crédito · formulario</span><a href="/solicitar.html">Abrir pantalla ↗</a></div><div class="preview-body"><iframe title="Vista en vivo de Solicitar crédito" data-live-src="/solicitar.html" loading="lazy" tabindex="-1"></iframe><div class="preview-message">Cargando vista…</div></div></div>
+      </section>
+
+      <section id="estudio" class="section">
+        <div class="section-heading"><span class="step-index">03</span><div><div class="eyebrow">ANALISTA DE CRÉDITO</div><h2>Iniciar el estudio</h2></div></div>
+        <ol class="instructions"><li>Ingresa con la cuenta del Analista y abre <strong>Estudio</strong>. Los radicados llegan a una bandeja compartida para los analistas.</li><li>Busca el número <code>SOL-</code>, abre el caso y revisa datos, soportes e historial.</li><li>Selecciona <strong>Iniciar o retomar estudio</strong>. Registra ingresos y obligaciones mensuales verificados y deja constancia de la revisión.</li></ol>
+        <p class="outcome"><strong>Resultado:</strong> la solicitud pasa de <em>Radicada</em> a <em>En estudio</em>.</p>
+        <div class="preview" data-protected><div class="preview-bar"><span>Estudio · bandeja compartida</span><a href="/solicitudes.html">Abrir pantalla ↗</a></div><div class="preview-body"><iframe title="Vista en vivo de Estudio" data-live-src="/solicitudes.html" loading="lazy" tabindex="-1"></iframe><div class="preview-message">Ingresa a Ziklo para cargar esta vista.</div></div></div>
+      </section>
+
+      <section id="subsanacion" class="section">
+        <div class="section-heading"><span class="step-index">04</span><div><div class="eyebrow">ANALISTA → RADICADOR</div><h2>Pedir y aportar información</h2></div></div>
+        <ol class="instructions"><li>Si falta un dato o soporte, el Analista escribe un motivo claro y selecciona <strong>Solicitar información</strong>.</li><li>El Radicador ve el caso en <strong>Avisos</strong> y en <strong>Solicitudes que necesitan información</strong>. Abre el radicado y lee el motivo.</li><li>El Radicador usa <strong>Responder al analista</strong>: escribe la respuesta y, si corresponde, adjunta un PDF de máximo 10 MB.</li><li>Al enviar, el caso vuelve a <em>En estudio</em> para que el Analista continúe.</li></ol>
+        <div class="example"><strong>Ejemplo de observación</strong><p>«Hace falta el soporte de ingresos del último mes para verificar la capacidad de pago». La respuesta debe indicar qué se aporta y adjuntar el soporte cuando exista.</p></div>
+      </section>
+
+      <section id="decision" class="section">
+        <div class="section-heading"><span class="step-index">05</span><div><div class="eyebrow">APROBADOR</div><h2>Registrar la decisión</h2></div></div>
+        <ol class="instructions"><li>Ingresa con la cuenta del Aprobador, abre <strong>Estudio</strong> y busca el mismo radicado.</li><li>Revisa el estudio, los documentos y los valores mensuales verificados.</li><li>Elige <strong>Aprobar</strong> o <strong>Rechazar</strong>. Si rechazas, escribe un motivo claro. Confirma la decisión.</li></ol>
+        <p class="outcome"><strong>Resultado del ejemplo:</strong> elige <em>Aprobar</em> para continuar el ciclo. El sistema impide que quien participó en el estudio tome la decisión de aprobación.</p>
+      </section>
+
+      <section id="prestamo" class="section">
+        <div class="section-heading"><span class="step-index">06</span><div><div class="eyebrow">USUARIO CON PERMISO DE CREACIÓN</div><h2>Crear el préstamo aprobado</h2></div></div>
+        <ol class="instructions"><li>Abre el radicado en estado <em>Aprobada</em>.</li><li>Selecciona <strong>Crear préstamo aprobado</strong> y confirma.</li><li>Comprueba que el préstamo queda vinculado a la solicitud. Esta acción todavía no registra entrega de dinero.</li></ol>
+        <p class="outcome"><strong>Resultado:</strong> aparece el préstamo vinculado y el siguiente paso pide el contrato firmado.</p>
+      </section>
+
+      <section id="desembolso" class="section">
+        <div class="section-heading"><span class="step-index">07</span><div><div class="eyebrow">CAJA</div><h2>Registrar el desembolso</h2></div></div>
+        <ol class="instructions"><li>Ingresa con la cuenta de Caja y abre el radicado aprobado con préstamo vinculado.</li><li>En <strong>Contrato firmado</strong>, adjunta el PDF aprobado por la empresa y firmado por el solicitante. Verifica su autenticidad.</li><li>Comprueba por fuera de Ziklo que los fondos fueron entregados por el medio acordado.</li><li>Ingresa la fecha de desembolso y la fecha de la primera cuota. Marca la confirmación y selecciona <strong>Registrar desembolso</strong>.</li></ol>
+        <div class="important"><strong>Antes de continuar</strong><p>Ziklo registra el desembolso y genera el plan de cuotas; esta acción no transfiere dinero. No confirmes la entrega hasta haberla verificado. El contrato y las autorizaciones deben estar aprobados por la empresa antes de usar datos o documentos reales.</p></div>
+        <p class="outcome"><strong>Resultado:</strong> la solicitud pasa a <em>Desembolsada</em> y el préstamo queda activo con su plan de cuotas.</p>
+      </section>
+
+      <section id="verificacion" class="section">
+        <div class="section-heading"><span class="step-index">08</span><div><div class="eyebrow">CIERRE DEL RECORRIDO</div><h2>Verificar el resultado</h2></div></div>
+        <ol class="instructions"><li>Abre <strong>Estudio</strong> y comprueba que el radicado figure como <em>Desembolsada</em>, con préstamo vinculado e historial de actuaciones.</li><li>Abre <strong>Recaudos</strong> para consultar el préstamo activo y su plan de cuotas.</li><li>Conserva el radicado y la referencia del préstamo para consultas posteriores.</li></ol>
+        <div class="preview" data-protected><div class="preview-bar"><span>Recaudos · préstamo y cuotas</span><a href="/recaudos.html">Abrir pantalla ↗</a></div><div class="preview-body"><iframe title="Vista en vivo de Recaudos" data-live-src="/recaudos.html" loading="lazy" tabindex="-1"></iframe><div class="preview-message">Ingresa a Ziklo para cargar esta vista.</div></div></div>
+      </section>
+
+      <footer class="footer"><span>Manual operativo de Ziklo · ciclo de solicitud a desembolso</span><a href="#inicio">Volver arriba ↑</a></footer>
+    </main>
+  </div>
+  <script src="manual.js?v=2"></script>
+</body>
+</html>

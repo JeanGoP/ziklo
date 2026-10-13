@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ziklo | Simulador de préstamos</title>
+  <link rel="icon" type="image/svg+xml" href="/brand/ziklo-symbol.svg">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="theme.css?v=3">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand"><img class="brand-logo" src="/brand/ziklo-logo-light.svg" alt="Ziklo"><small>simulador</small></div>
+    <div class="top-note">Simulación informativa · sin movimientos reales &nbsp; <a href="/solicitar.html">Solicitar crédito ↗</a> &nbsp; <a href="/login.html">Ingresar al sistema ↗</a></div>
+  </header>
+  <main class="container">
+    <section class="intro">
+      <div class="eyebrow">Motor financiero</div>
+      <h1>Simula un préstamo antes de crearlo</h1>
+      <p>Compara la cuota, los intereses y cada vencimiento con las condiciones que definas. Esta consulta no guarda préstamos ni genera recaudos.</p>
+    </section>
+
+    <div class="layout">
+      <section class="panel form-panel" aria-labelledby="conditions-title">
+        <div class="panel-heading"><div><div class="eyebrow">01 / Condiciones</div><h2 id="conditions-title">Datos del préstamo</h2></div><span class="pill">Editable</span></div>
+        <form id="simulator-form">
+          <div class="field-grid">
+            <label class="field wide">Monto del préstamo <span>COP</span><input id="principal" type="number" min="0.01" step="0.01" value="10000000" required></label>
+            <label class="field">Tasa <span>porcentaje</span><div class="input-suffix"><input id="rate" type="number" min="0" step="0.0001" value="1.5" required><b>%</b></div></label>
+            <label class="field">Tipo de tasa<select id="rateKind"><option value="PeriodicEffective">Efectiva periódica</option><option value="PeriodicSimple">Simple periódica</option><option value="EffectiveAnnual">Efectiva anual</option><option value="AnnualSimple">Simple anual</option><option value="NominalAnnual">Nominal anual convertible</option></select></label>
+            <label class="field">Sistema de amortización<select id="method"><option value="French">Cuota fija / francés</option><option value="FixedPrincipal">Abono fijo a capital</option><option value="SimplePeriodic">Interés periódico y capital al final</option><option value="Bullet">Pago único al vencimiento</option><option value="Custom">Capital personalizado</option></select></label>
+            <label class="field">Periodicidad<select id="frequency"><option value="Monthly">Mensual</option><option value="Every15Days">Cada 15 días</option><option value="SemiMonthly">Dos veces al mes</option><option value="Weekly">Semanal</option><option value="Quarterly">Trimestral</option><option value="SemiAnnual">Semestral</option><option value="Annual">Anual</option><option value="Daily">Diaria</option></select></label>
+            <label class="field">Número de periodos<input id="installments" type="number" min="1" max="600" value="12" required></label>
+            <label class="field">Convención de días<select id="dayCount"><option value="Actual365Fixed">ACT/365 fijo</option><option value="Actual360">ACT/360</option><option value="ActualActual">ACT/ACT</option></select></label>
+            <label class="field">Fecha de desembolso<input id="disbursementDate" type="date" required></label>
+            <label class="field">Primer vencimiento<input id="firstDueDate" type="date" required></label>
+            <label class="field">Seguro por cuota <span>COP</span><input id="insurance" type="number" min="0" step="0.01" value="0"></label>
+            <label class="field">Otros cargos por cuota <span>COP</span><input id="charges" type="number" min="0" step="0.01" value="0"></label>
+          </div>
+          <label class="field custom-field" id="customField" hidden>Capital de cada cuota, separado por comas <span>COP</span><textarea id="customPrincipal" rows="3" placeholder="Ejemplo: 400000, 600000"></textarea><small>Debe haber un valor por periodo y la suma debe igualar el monto del préstamo.</small></label>
+          <label class="check"><input id="capitalize" type="checkbox"><span>Capitalizar interés en cada periodo <small>Disponible para pago único</small></span></label>
+          <button class="primary-button" type="submit">Calcular simulación <span aria-hidden="true">↗</span></button>
+          <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
+        </form>
+      </section>
+
+      <section class="results" aria-labelledby="result-title">
+        <div class="panel results-header">
+          <div class="eyebrow">02 / Resultado</div>
+          <h2 id="result-title">Tu proyección</h2>
+          <p>Los valores muestran el plan esperado con la tasa y las fechas indicadas.</p>
+          <div class="hero-number"><span>Primera cuota o pago</span><strong id="estimatedPayment">—</strong></div>
+          <div class="metrics">
+            <div><span>Capital original</span><strong id="originalPrincipal">—</strong></div>
+            <div><span>Intereses totales</span><strong id="totalInterest">—</strong></div>
+            <div><span>Seguros y cargos</span><strong id="totalCharges">—</strong></div>
+            <div><span>Total a pagar</span><strong id="totalPayable">—</strong></div>
+          </div>
+        </div>
+        <div class="panel note"><span class="note-icon">i</span><div><strong>Cómo leer esta simulación</strong><p>Una tasa efectiva por periodo completo se aplica al periodo contractual. Los intervalos parciales usan la convención de días seleccionada. Los intereses capitalizados aparecen por separado en el plan.</p></div></div>
+      </section>
+    </div>
+
+    <section class="panel schedule-panel" aria-labelledby="schedule-title">
+      <div class="panel-heading"><div><div class="eyebrow">03 / Detalle</div><h2 id="schedule-title">Tabla de amortización</h2></div><span id="rowCount" class="pill">0 periodos</span></div>
+      <div class="table-wrap"><table><thead><tr><th>Periodo</th><th>Vencimiento</th><th>Saldo inicial</th><th>Capital</th><th>Interés</th><th>Capitalizado</th><th>Seguros</th><th>Cargos</th><th>Pago</th><th>Saldo final</th></tr></thead><tbody id="scheduleBody"><tr><td colspan="10" class="empty">Completa las condiciones y calcula tu simulación.</td></tr></tbody></table></div>
+    </section>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>

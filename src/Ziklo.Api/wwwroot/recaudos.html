@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ziklo | Recaudos</title>
+  <link rel="icon" type="image/svg+xml" href="/brand/ziklo-symbol.svg">
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="recaudos.css">
+  <link rel="stylesheet" href="theme.css?v=4">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/"><img class="brand-logo" src="/brand/ziklo-logo-light.svg" alt="Ziklo"><small>operación</small></a>
+    <nav><a href="/">Simulador</a><a href="/solicitar.html">Solicitar crédito</a><a href="/solicitudes.html">Estudio</a><a href="/dashboard.html">Panel de cartera</a><a href="/clientes.html">Clientes</a><a href="/informes.html">Informes</a><span aria-current="page">Recaudos</span><a href="/usuarios.html">Usuarios</a></nav>
+  </header>
+  <main class="container">
+    <section class="intro">
+      <div class="eyebrow">Operación crediticia</div>
+      <h1>Recaudos</h1>
+      <p>Busca por número de préstamo o nombre del cliente, selecciona las cuotas exigibles y registra el pago.</p>
+    </section>
+    <section class="panel" id="access-panel" hidden><h2>No se pudieron cargar los recaudos</h2><p id="access-error"></p></section>
+    <section id="workspace" hidden>
+      <div class="panel search-panel">
+        <div class="field"><label for="company">Empresa</label><select id="company"></select></div>
+        <form id="search-form" class="search-form">
+          <div class="field"><label for="loan-search">Préstamo o nombre del cliente</label><input id="loan-search" type="search" maxlength="100" placeholder="Número de préstamo o nombre"></div>
+          <button class="primary" type="submit">Buscar</button>
+        </form>
+      </div>
+      <div class="panel report-panel">
+        <div><div class="eyebrow">Conciliación</div><h2>Reporte de recaudos</h2></div>
+        <div class="field"><label for="report-from">Desde</label><input id="report-from" type="date"></div>
+        <div class="field"><label for="report-to">Hasta</label><input id="report-to" type="date"></div>
+        <button id="download-report" type="button">Descargar CSV</button>
+      </div>
+      <p class="feedback" id="feedback" role="status" aria-live="polite"></p>
+      <section class="panel results-panel" aria-labelledby="results-title">
+        <div class="section-top"><h2 id="results-title">Préstamos</h2><span class="pill" id="result-count">0 resultados</span></div>
+        <div id="loan-results" class="loan-results"></div>
+        <div class="pagination"><button id="previous" type="button">Anterior</button><span id="page-label"></span><button id="next" type="button">Siguiente</button></div>
+      </section>
+      <section id="loan-detail" hidden>
+        <div class="detail-grid">
+          <section class="panel" aria-labelledby="loan-title">
+            <div class="section-top"><div><div class="eyebrow">Préstamo seleccionado</div><h2 id="loan-title"></h2><p id="client-name" class="hint"></p></div><span class="pill" id="loan-status"></span></div>
+            <dl class="summary-list">
+              <div><dt>Capital original</dt><dd id="original-principal"></dd></div>
+              <div><dt>Saldo publicado</dt><dd id="balance-total"></dd></div>
+              <div><dt>Capital pendiente</dt><dd id="balance-principal"></dd></div>
+              <div><dt>Interés corriente pendiente</dt><dd id="balance-interest"></dd></div>
+              <div><dt>Mora pendiente</dt><dd id="balance-late"></dd></div>
+              <div><dt>Cuotas vencidas</dt><dd id="past-due"></dd></div>
+            </dl>
+            <p class="hint">El saldo publicado puede cambiar al causar intereses, cargos y mora al registrar un recaudo.</p>
+          </section>
+          <section class="panel" aria-labelledby="payment-title">
+            <div class="eyebrow">Nuevo comprobante</div><h2 id="payment-title">Registrar recaudo</h2>
+            <p class="hint">Selecciona abajo una o varias cuotas exigibles. Puedes ajustar el valor recibido para hacer un pago parcial. La mora puede cambiar hasta el registro.</p>
+            <form id="payment-form" class="payment-form">
+              <div class="field"><label for="payment-date">Fecha efectiva</label><input id="payment-date" type="date" required></div>
+              <div class="field"><label for="payment-amount">Valor recibido</label><input id="payment-amount" type="number" min="0.01" step="0.01" inputmode="decimal" required></div>
+              <div class="field"><label for="payment-method">Medio de pago</label><select id="payment-method"><option>Efectivo</option><option>Transferencia</option><option>PSE</option><option>Tarjeta</option><option>Consignación</option><option>Otro</option></select></div>
+              <div class="field"><label for="payment-reference">Referencia</label><input id="payment-reference" maxlength="120" required></div>
+              <p id="selected-installments" class="selection-summary" aria-live="polite">Ninguna cuota seleccionada.</p>
+              <button class="primary" id="submit-payment" type="submit">Registrar pago</button>
+            </form>
+            <p class="feedback" id="payment-feedback" role="status" aria-live="polite"></p>
+          </section>
+        </div>
+        <section class="panel table-panel" aria-labelledby="schedule-title">
+          <div class="section-top"><div><h2 id="schedule-title">Plan de pagos</h2><p class="hint">Marca las cuotas que pagará el cliente. Solo están disponibles las exigibles en la fecha efectiva.</p></div></div>
+          <div class="table-wrap"><table><thead><tr><th>Elegir</th><th>Cuota</th><th>Vence</th><th>Capital</th><th>Interés</th><th>Seguro</th><th>Cargos</th><th>Saldo registrado</th><th>Total inicial</th></tr></thead><tbody id="schedule-body"></tbody></table></div>
+        </section>
+        <section class="panel table-panel" aria-labelledby="receipts-title">
+          <div class="section-top"><h2 id="receipts-title">Recibos recientes</h2><span id="receipt-count" class="pill"></span></div>
+          <div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Referencia</th><th>Medio</th><th>Recibido</th><th>Aplicado</th><th>Comprobante</th></tr></thead><tbody id="receipts-body"></tbody></table></div>
+        </section>
+      </section>
+    </section>
+  </main>
+  <dialog id="receipt-dialog" aria-labelledby="receipt-title">
+    <div class="section-top"><h2 id="receipt-title">Comprobante de recaudo</h2><button id="close-receipt" type="button" aria-label="Cerrar">Cerrar</button></div>
+    <div id="receipt-detail"></div>
+    <button id="print-receipt" type="button">Imprimir comprobante</button>
+  </dialog>
+  <script src="session.js?v=9"></script>
+  <script src="recaudos.js?v=4"></script>
+</body>
+</html>

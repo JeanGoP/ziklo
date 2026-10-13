@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ziklo | Clientes</title>
+  <link rel="icon" type="image/svg+xml" href="/brand/ziklo-symbol.svg">
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="recaudos.css">
+  <link rel="stylesheet" href="clientes.css">
+  <link rel="stylesheet" href="theme.css?v=4">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/"><img class="brand-logo" src="/brand/ziklo-logo-light.svg" alt="Ziklo"><small>operación</small></a>
+    <nav><a href="/">Simulador</a><a href="/solicitar.html">Solicitar crédito</a><a href="/solicitudes.html">Estudio</a><a href="/dashboard.html">Panel</a><a href="/recaudos.html">Recaudos</a><a href="/informes.html">Informes</a><span aria-current="page">Clientes</span><a href="/usuarios.html">Usuarios</a></nav>
+  </header>
+  <main class="container">
+    <section class="intro"><div class="eyebrow">Operación crediticia</div><h1>Clientes</h1><p>Registra clientes, consulta su cartera y conserva sus referencias.</p></section>
+    <section class="panel" id="access-panel" hidden><h2>No se pudieron cargar los clientes</h2><p id="access-error"></p></section>
+    <section id="workspace" hidden>
+      <div class="panel search-panel">
+        <div class="field"><label for="company">Empresa</label><select id="company"></select></div>
+        <form id="search-form" class="search-form"><div class="field"><label for="client-search">Nombre o identificación</label><input id="client-search" type="search" placeholder="Buscar cliente"></div><button class="primary" type="submit">Buscar</button></form>
+      </div>
+      <p id="feedback" class="feedback" role="status" aria-live="polite"></p>
+      <div class="client-grid">
+        <section class="panel" aria-labelledby="create-title">
+          <div class="section-top"><div><div class="eyebrow">Nuevo registro</div><h2 id="create-title">Crear cliente</h2></div></div>
+          <form id="create-form" class="client-form">
+            <div class="field"><label for="identification-type">Tipo de identificación</label><input id="identification-type" maxlength="30" required></div>
+            <div class="field"><label for="identification-number">Identificación</label><input id="identification-number" maxlength="60" required></div>
+            <div class="field full"><label for="client-name">Nombre o razón social</label><input id="client-name" maxlength="250" required></div>
+            <div class="field full"><label for="address">Dirección</label><input id="address" maxlength="400"></div>
+            <div class="field"><label for="phone">Teléfono</label><input id="phone" maxlength="60"></div>
+            <div class="field"><label for="whatsapp">WhatsApp</label><input id="whatsapp" maxlength="60"></div>
+            <div class="field full"><label for="email">Correo electrónico</label><input id="email" type="email" maxlength="250"></div>
+            <div class="field"><label for="city">Ciudad</label><input id="city" maxlength="120"></div>
+            <div class="field"><label for="birth-date">Fecha de nacimiento</label><input id="birth-date" type="date"></div>
+            <div class="field full"><label for="economic-activity">Actividad económica</label><input id="economic-activity" maxlength="200"></div>
+            <div class="field"><label for="monthly-income">Ingreso mensual</label><input id="monthly-income" type="number" min="0" step="0.01" inputmode="decimal"></div>
+            <div class="field"><label for="employer">Empresa donde trabaja</label><input id="employer" maxlength="250"></div>
+            <button class="primary full" type="submit">Guardar cliente</button>
+          </form>
+          <p id="create-feedback" class="feedback" role="status" aria-live="polite"></p>
+        </section>
+        <section class="panel" aria-labelledby="list-title">
+          <div class="section-top"><h2 id="list-title">Resultados</h2><span id="result-count" class="pill"></span></div>
+          <div id="client-results" class="client-results"></div>
+          <div class="pagination"><button id="previous" type="button">Anterior</button><span id="page-label"></span><button id="next" type="button">Siguiente</button></div>
+        </section>
+      </div>
+      <section id="client-detail" hidden>
+        <div class="detail-grid">
+          <section class="panel" aria-labelledby="detail-title">
+            <div class="eyebrow">Cliente seleccionado</div><h2 id="detail-title"></h2>
+            <dl class="summary-list"><div><dt>Identificación</dt><dd id="detail-identification"></dd></div><div><dt>Estado</dt><dd id="detail-status"></dd></div><div><dt>Préstamos activos</dt><dd id="active-loans"></dd></div><div><dt>Préstamos cancelados</dt><dd id="paid-off-loans"></dd></div><div><dt>Saldo total</dt><dd id="total-outstanding"></dd></div><div><dt>Capital pendiente</dt><dd id="principal-outstanding"></dd></div><div><dt>Interés pendiente</dt><dd id="interest-outstanding"></dd></div><div><dt>Mora pendiente</dt><dd id="late-outstanding"></dd></div><div><dt>Pagos registrados</dt><dd id="payment-count"></dd></div></dl>
+            <p class="hint" id="summary-date"></p>
+          </section>
+          <section class="panel" aria-labelledby="reference-title">
+            <div class="eyebrow">Información adicional</div><h2 id="reference-title">Referencias</h2>
+            <form id="reference-form" class="client-form">
+              <div class="field"><label for="reference-kind">Tipo</label><select id="reference-kind"><option value="Personal">Personal</option><option value="Commercial">Comercial</option></select></div>
+              <div class="field"><label for="reference-name">Nombre</label><input id="reference-name" maxlength="250" required></div>
+              <div class="field"><label for="relationship">Relación</label><input id="relationship" maxlength="120"></div>
+              <div class="field"><label for="reference-phone">Teléfono</label><input id="reference-phone" maxlength="60"></div>
+              <div class="field full"><label for="reference-email">Correo electrónico</label><input id="reference-email" type="email" maxlength="250"></div>
+              <div class="field full"><label for="reference-notes">Observaciones</label><textarea id="reference-notes" maxlength="1000" rows="2"></textarea></div>
+              <button class="primary full" type="submit">Agregar referencia</button>
+            </form>
+            <p id="reference-feedback" class="feedback" role="status" aria-live="polite"></p>
+            <div id="reference-list" class="reference-list"></div>
+          </section>
+        </div>
+        <section class="panel table-panel" aria-labelledby="documents-title">
+          <div class="section-top"><div><div class="eyebrow">Expediente</div><h2 id="documents-title">Documentos</h2></div></div>
+          <form id="document-form" class="document-form">
+            <div class="field"><label for="document-file">Archivo PDF, PNG o JPEG (máximo 10 MB)</label><input id="document-file" type="file" accept=".pdf,.png,.jpg,.jpeg,application/pdf,image/png,image/jpeg" required></div>
+            <button class="primary" type="submit">Adjuntar documento</button>
+          </form>
+          <p id="document-feedback" class="feedback" role="status" aria-live="polite"></p>
+          <div id="document-list" class="document-list"></div>
+        </section>
+      </section>
+    </section>
+  </main>
+  <script src="session.js?v=9"></script>
+  <script src="clientes.js?v=2"></script>
+</body>
+</html>

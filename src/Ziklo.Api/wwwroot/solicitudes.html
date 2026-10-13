@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ziklo | Estudio de solicitudes</title>
+  <link rel="icon" type="image/svg+xml" href="/brand/ziklo-symbol.svg">
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="theme.css?v=4">
+  <link rel="stylesheet" href="solicitudes.css?v=5">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/"><img class="brand-logo" src="/brand/ziklo-logo-light.svg" alt="Ziklo"><small>originación</small></a>
+    <nav><a href="/">Simulador</a><a href="/solicitar.html">Solicitar crédito</a><span aria-current="page">Estudio</span><a href="/dashboard.html">Panel</a><a href="/clientes.html">Clientes</a><a href="/recaudos.html">Recaudos</a><a href="/informes.html">Informes</a><a href="/usuarios.html">Usuarios</a></nav>
+  </header>
+  <main class="container">
+    <section class="intro"><div class="eyebrow">Originación / 02</div><h1>Estudio de solicitudes</h1><p>Selecciona un radicado para ver su estado, el siguiente paso y las acciones disponibles para tu perfil.</p></section>
+    <p id="feedback" role="status" aria-live="polite"></p>
+    <section class="panel study-alerts" id="my-alerts" hidden aria-live="polite"><div class="eyebrow">Para tus radicados</div><h2>Solicitudes que necesitan información</h2><p>El analista pidió estos datos para continuar. Revisa el motivo y contacta al solicitante.</p><div id="my-alert-list"></div></section>
+    <div class="study-layout" id="workspace" hidden>
+      <section class="panel">
+        <div class="study-heading"><div><div class="eyebrow">Bandeja</div><h2>Solicitudes</h2></div><button id="refresh" type="button">Actualizar</button></div>
+        <div class="study-filters"><label>Buscar por radicado, nombre o documento<input id="search" type="search" placeholder="Escribe para filtrar"></label><label>Estado<select id="status-filter"><option value="">Todos</option><option value="Submitted">Radicada</option><option value="InReview">En estudio</option><option value="NeedsInformation">Falta información</option><option value="Approved">Aprobada</option><option value="Disbursed">Desembolsada</option><option value="Rejected">Rechazada</option></select></label></div>
+        <div id="applications" class="application-list"></div>
+        <button id="more" type="button" hidden>Cargar más</button>
+      </section>
+      <section class="panel study-detail" id="detail"><p class="study-empty">Selecciona una solicitud para ver su información.</p></section>
+    </div>
+  </main>
+  <script src="session.js?v=9"></script>
+  <script src="solicitudes.js?v=9"></script>
+</body>
+</html>

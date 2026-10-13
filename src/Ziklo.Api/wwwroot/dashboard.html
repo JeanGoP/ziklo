@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ziklo | Panel de cartera</title>
+  <link rel="icon" type="image/svg+xml" href="/brand/ziklo-symbol.svg">
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="theme.css?v=4">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/"><img class="brand-logo" src="/brand/ziklo-logo-light.svg" alt="Ziklo"><small>operación</small></a>
+    <nav><a href="/">Simulador</a><a href="/solicitar.html">Solicitar crédito</a><a href="/solicitudes.html">Estudio</a><span aria-current="page">Panel de cartera</span><a href="/clientes.html">Clientes</a><a href="/recaudos.html">Recaudos</a><a href="/informes.html">Informes</a><a href="/usuarios.html">Usuarios</a></nav>
+  </header>
+  <main class="container">
+    <section class="intro">
+      <div class="eyebrow">Operación crediticia</div>
+      <h1>Panel de cartera</h1>
+      <p>Saldos publicados, recaudos e indicadores de atraso para una empresa y fecha de corte.</p>
+    </section>
+
+    <section class="panel" id="demo-error-panel" hidden><h2>No se pudo cargar el panel</h2><p id="demo-error" role="status"></p></section>
+
+    <section id="workspace" hidden>
+      <p id="print-context" class="print-context"></p>
+      <div class="panel toolbar">
+        <div class="filters">
+          <label>Empresa<select id="company"></select></label>
+          <label>Fecha de corte<input id="as-of" type="date" required></label>
+          <button class="primary" id="refresh" type="button">Actualizar</button>
+        </div>
+        <div class="actions"><a class="report-link" href="/informes.html">Ver informes</a><button id="export-xlsx" type="button">Descargar Excel</button><button id="export" type="button">CSV</button><button id="print" type="button">Imprimir / PDF</button></div>
+      </div>
+      <p class="feedback" id="workspace-feedback" role="status" aria-live="polite"></p>
+      <section class="cards" aria-label="Indicadores principales">
+        <article class="card highlight"><span>Saldo de cartera</span><strong id="portfolio-total">—</strong><small>Importes publicados en el libro</small></article>
+        <article class="card"><span>Capital pendiente</span><strong id="principal-outstanding">—</strong></article>
+        <article class="card"><span>Interés corriente pendiente</span><strong id="current-interest">—</strong></article>
+        <article class="card"><span>Mora pendiente</span><strong id="late-interest">—</strong></article>
+        <article class="card"><span>Recaudo del día</span><strong id="receipts-today">—</strong></article>
+        <article class="card"><span>Recaudo del mes</span><strong id="receipts-month">—</strong></article>
+        <article class="card"><span>Préstamos con saldo</span><strong id="active-loans">—</strong></article>
+        <article class="card"><span>Préstamos en atraso</span><strong id="delinquent-loans">—</strong></article>
+      </section>
+      <div class="lower-grid">
+        <section class="panel aging-panel" aria-labelledby="aging-title">
+          <div class="section-top"><div><div class="eyebrow">Distribución</div><h2 id="aging-title">Edad de cartera</h2></div></div>
+          <div id="aging-list" class="aging-list"></div>
+        </section>
+        <section class="panel flow-panel" aria-labelledby="flow-title">
+          <div class="section-top"><div><div class="eyebrow">Acumulado al corte</div><h2 id="flow-title">Movimiento financiero</h2></div></div>
+          <dl>
+            <div><dt>Capital desembolsado</dt><dd id="capital-disbursed">—</dd></div>
+            <div><dt>Interés corriente causado</dt><dd id="current-accrued">—</dd></div>
+            <div><dt>Interés corriente cobrado</dt><dd id="current-collected">—</dd></div>
+            <div><dt>Mora causada</dt><dd id="late-accrued">—</dd></div>
+            <div><dt>Mora cobrada</dt><dd id="late-collected">—</dd></div>
+            <div><dt>Préstamos cancelados</dt><dd id="paid-off">—</dd></div>
+          </dl>
+        </section>
+      </div>
+      <section class="panel table-panel" aria-labelledby="loans-title">
+        <div class="section-top"><div><div class="eyebrow">Detalle</div><h2 id="loans-title">Préstamos con saldo</h2></div><span id="loan-count" class="pill">0 préstamos</span></div>
+        <div class="table-wrap"><table><thead><tr><th>Préstamo</th><th>Edad</th><th>Días</th><th>Capital</th><th>Interés</th><th>Mora</th><th>Total</th></tr></thead><tbody id="loans-body"><tr><td colspan="7" class="empty">Cargando cartera…</td></tr></tbody></table></div>
+      </section>
+    </section>
+  </main>
+  <script src="session.js?v=9"></script>
+  <script src="dashboard.js?v=3"></script>
+</body>
+</html>

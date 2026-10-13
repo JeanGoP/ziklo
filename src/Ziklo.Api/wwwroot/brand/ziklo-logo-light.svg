@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 205 80" role="img" aria-labelledby="title">
+  <title id="title">Ziklo</title>
+  <rect width="80" height="80" rx="17" fill="#3B82F6"/>
+  <path d="M21 23h38L21 57h38" fill="none" stroke="#FFFFFF" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <text x="98" y="57" fill="#0A0F1E" font-family="Segoe UI Variable, Segoe UI, Arial, sans-serif" font-size="54" font-weight="750" letter-spacing="-3.8">ziklo</text>
+</svg>
