@@ -3,6 +3,7 @@
 artifacts/
 **/artifacts/
 output/
+publish/
 tmp/
 src/Ziklo.Api/demo-data/
 *.log
