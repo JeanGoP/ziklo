@@ -37,7 +37,7 @@
             <label class="field">Seguro por cuota <span>COP</span><input id="insurance" type="text" data-money data-min="0" inputmode="decimal" value="0"></label>
             <label class="field">Otros cargos por cuota <span>COP</span><input id="charges" type="text" data-money data-min="0" inputmode="decimal" value="0"></label>
           </div>
-          <label class="field custom-field" id="customField" hidden>Capital de cada cuota, separado por punto y coma <span>COP</span><textarea id="customPrincipal" rows="3" placeholder="Ejemplo: 400.000; 600.000"></textarea><small>Debe haber un valor por periodo y la suma debe igualar el monto del préstamo.</small></label>
+          <label class="field custom-field" id="customField" hidden>Capital de cada cuota, separado por punto y coma <span>COP</span><textarea id="customPrincipal" data-money-list rows="3" placeholder="Ejemplo: 400.000; 600.000"></textarea><small>Debe haber un valor por periodo y la suma debe igualar el monto del préstamo.</small></label>
           <label class="check"><input id="capitalize" type="checkbox"><span>Capitalizar interés en cada periodo <small>Disponible para pago único</small></span></label>
           <button class="primary-button" type="submit">Calcular simulación <span aria-hidden="true">↗</span></button>
           <div class="feedback" id="feedback" role="status" aria-live="polite"></div>
@@ -66,7 +66,7 @@
       <div class="table-wrap"><table><thead><tr><th>Periodo</th><th>Vencimiento</th><th>Saldo inicial</th><th>Capital</th><th>Interés</th><th>Capitalizado</th><th>Seguros</th><th>Cargos</th><th>Pago</th><th>Saldo final</th></tr></thead><tbody id="scheduleBody"><tr><td colspan="10" class="empty">Completa las condiciones y calcula tu simulación.</td></tr></tbody></table></div>
     </section>
   </main>
-  <script src="money-input.js?v=1"></script>
-  <script src="app.js?v=2"></script>
+  <script src="money-input.js?v=2"></script>
+  <script src="app.js?v=3"></script>
 </body>
 </html>

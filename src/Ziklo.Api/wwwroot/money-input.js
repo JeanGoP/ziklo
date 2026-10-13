@@ -64,6 +64,17 @@ window.ZikloMoney = (() => {
     validate(input);
   }
 
+  function formatList(input) {
+    const previous = input.value;
+    const cursor = input.selectionStart ?? previous.length;
+    const format = value => value.split(';').map(part => clean(part.trim())).join('; ');
+    input.value = format(previous);
+    if (document.activeElement === input && input.setSelectionRange) {
+      const position = format(previous.slice(0, cursor)).length;
+      input.setSelectionRange(position, position);
+    }
+  }
+
   function bind(root = document) {
     for (const input of root.querySelectorAll('[data-money]')) {
       if (input.dataset.moneyBound) continue;
@@ -71,6 +82,13 @@ window.ZikloMoney = (() => {
       input.addEventListener('input', () => formatInput(input));
       input.addEventListener('blur', () => formatInput(input));
       formatInput(input);
+    }
+    for (const input of root.querySelectorAll('[data-money-list]')) {
+      if (input.dataset.moneyBound) continue;
+      input.dataset.moneyBound = 'true';
+      input.addEventListener('input', () => formatList(input));
+      input.addEventListener('blur', () => formatList(input));
+      formatList(input);
     }
   }
 

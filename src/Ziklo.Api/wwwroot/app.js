@@ -12,12 +12,6 @@ function syncOptions() {
 }
 input('method').addEventListener('change', syncOptions);
 syncOptions();
-input('customPrincipal').addEventListener('blur', event => {
-  event.target.value = event.target.value.split(';')
-    .map(value => value.trim() ? ZikloMoney.clean(value.trim()) : '')
-    .join('; ');
-});
-
 const today = new Date();
 const first = new Date(Date.UTC(today.getFullYear(), today.getMonth() + 1, today.getDate()));
 input('disbursementDate').value = today.toISOString().slice(0, 10);
