@@ -119,7 +119,7 @@ La API aplica permisos a cada empresa y rol. Un administrador puede consultar `G
 
 ## Base de datos
 
-Las migraciones están en `src/Ziklo.Infrastructure/Migrations` y el SQL idempotente para revisión en `docs/initial-schema.sql`. No se han aplicado a una instancia de SQL Server en este entorno. El aprovisionamiento inicial es un comando local; no hay endpoint público para crear un administrador.
+Las migraciones están en `src/Ziklo.Infrastructure/Migrations`. El script idempotente completo para una base SQL Server existente llamada `ziklo` está en `docs/ziklo-sqlserver.sql`; incluye todas las migraciones actuales. `docs/initial-schema.sql` es una versión anterior e incompleta. No se ha ejecutado el script contra una instancia de SQL Server en este entorno. El aprovisionamiento inicial es un comando local; no hay endpoint público para crear un administrador.
 
 ## Límites actuales del simulador
 
