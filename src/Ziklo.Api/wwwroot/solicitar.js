@@ -254,11 +254,11 @@ function showLimits() {
 
 async function loadProducts() {
   try {
-    const response = await fetch('/api/demo/application-products');
+    const response = await fetch('/api/application-products', {cache: 'no-store'});
     if (!response.ok) throw new Error('El catálogo de productos no está disponible.');
     products.push(...await response.json());
     productSelect.replaceChildren();
-    if (!products.length) throw new Error('No hay productos publicados para solicitar.');
+    if (!products.length) throw new Error('No hay productos vigentes. Un administrador debe crear un producto y publicar sus condiciones en Productos.');
     for (const item of products) {
       const option = document.createElement('option');
       option.value = item.productVersionId;
@@ -317,7 +317,15 @@ form.addEventListener('submit', async event => {
   submit.disabled = true;
   submit.textContent = 'Radicando…';
   try {
-    const response = await zikloFetch('/api/demo/credit-applications', { method: 'POST', body: payload });
+    const localDemo = ['127.0.0.1', 'localhost', '::1'].includes(location.hostname);
+    const access = await window.zikloAccessReady;
+    const companyId = access?.profile?.companies?.[0]?.companyId;
+    if (!localDemo && !companyId)
+      throw new Error('Para radicar pruebas internas, ingresa con una cuenta de radicador o administrador.');
+    const endpoint = companyId
+      ? `/api/companies/${encodeURIComponent(companyId)}/credit-applications/submit`
+      : '/api/demo/credit-applications';
+    const response = await zikloFetch(endpoint, { method: 'POST', body: payload });
     const data = await response.json();
     if (!response.ok) throw new Error(data.detail || data.title || 'No se pudo radicar la solicitud.');
     document.querySelector('#reference').textContent = data.reference;

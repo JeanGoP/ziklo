@@ -180,6 +180,37 @@ app.MapPost("/api/simulations/loans", (SimulationRequest request, LoanSimulator 
     }
 }).RequireRateLimiting("simulation");
 
+if (businessEnabled)
+{
+    app.MapGet("/api/application-products", async (ZikloDbContext db, CancellationToken ct) =>
+    {
+        DateOnly today = DateOnly.FromDateTime(DateTime.UtcNow);
+        var versions = await db.ProductVersions.AsNoTracking()
+            .Where(v => v.IsPublished && v.ValidFrom <= today)
+            .Join(db.CreditProducts.AsNoTracking().Where(p => p.IsActive),
+                version => new { version.CompanyId, Id = version.ProductId },
+                product => new { product.CompanyId, product.Id },
+                (version, product) => new
+                {
+                    version.ProductId, version.CompanyId, productVersionId = version.Id,
+                    productName = product.Name, version.Number,
+                    version.MinimumAmount, version.MaximumAmount,
+                    version.MinimumInstallments, version.MaximumInstallments,
+                    version.CurrencyCode
+                }).ToListAsync(ct);
+        var products = versions.GroupBy(x => x.ProductId)
+            .Select(group => group.OrderByDescending(x => x.Number).First())
+            .OrderBy(x => x.productName)
+            .Select(x => new
+            {
+                companyId = x.CompanyId, x.productVersionId, x.productName,
+                x.MinimumAmount, x.MaximumAmount, x.MinimumInstallments,
+                x.MaximumInstallments, x.CurrencyCode
+            });
+        return Results.Ok(products);
+    }).WithTags("Catálogo de productos");
+}
+
 if (demoMode)
 {
     app.MapGet("/api/demo/application-products", async (HttpContext http,

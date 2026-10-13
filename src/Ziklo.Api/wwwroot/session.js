@@ -1,6 +1,6 @@
 const backOfficePages = new Set([
   '/dashboard.html', '/solicitudes.html', '/clientes.html',
-  '/recaudos.html', '/informes.html', '/usuarios.html'
+  '/recaudos.html', '/informes.html', '/usuarios.html', '/productos.html'
 ]);
 const requiredPermissions = {
   '/dashboard.html': 'ViewReports',
@@ -8,7 +8,8 @@ const requiredPermissions = {
   '/clientes.html': 'ViewClients',
   '/recaudos.html': 'ViewLoans',
   '/informes.html': 'ViewReports',
-  '/usuarios.html': 'ManagePermissions'
+  '/usuarios.html': 'ManagePermissions',
+  '/productos.html': 'ManageProducts'
 };
 const signInUrl = `/login.html?next=${encodeURIComponent(location.pathname + location.search)}`;
 const tokenAtLoad = sessionStorage.getItem('zikloAccessToken');
@@ -109,6 +110,17 @@ async function checkPageAccess() {
   for (const link of document.querySelectorAll('.topbar nav a[href]')) {
     const required = requiredPermissions[new URL(link.href).pathname];
     if (required) link.hidden = !permissions.has(required);
+  }
+  if (permissions.has('ManageProducts')) {
+    const nav = document.querySelector('.topbar nav');
+    if (nav && location.pathname !== '/productos.html' &&
+        !nav.querySelector('a[href="/productos.html"]')) {
+      const link = document.createElement('a');
+      link.href = '/productos.html';
+      link.textContent = 'Productos';
+      nav.querySelector('[href="/usuarios.html"]')?.before(link);
+      if (!link.isConnected) nav.append(link);
+    }
   }
   const signInLink = document.querySelector('.topbar nav [data-login]');
   if (signInLink) signInLink.hidden = true;

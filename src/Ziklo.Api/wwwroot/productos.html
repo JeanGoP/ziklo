@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Ziklo | Productos de crédito</title>
+  <link rel="icon" type="image/svg+xml" href="/brand/ziklo-symbol.svg">
+  <link rel="stylesheet" href="dashboard.css">
+  <link rel="stylesheet" href="theme.css?v=4">
+  <link rel="stylesheet" href="productos.css?v=1">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/"><img class="brand-logo" src="/brand/ziklo-logo-light.svg" alt="Ziklo"><small>administración</small></a>
+    <nav><a href="/">Simulador</a><a href="/solicitudes.html">Solicitudes</a><a href="/dashboard.html">Panel</a><a href="/informes.html">Informes</a><span aria-current="page">Productos</span><a href="/usuarios.html">Usuarios</a></nav>
+  </header>
+  <main class="container">
+    <section class="intro"><div class="eyebrow">Administración</div><h1>Productos de crédito</h1><p>Define los productos y publica sus condiciones. Solo los productos activos con condiciones vigentes aparecerán en el formulario de solicitud.</p></section>
+    <p id="feedback" class="feedback" role="status" aria-live="polite"></p>
+    <div class="product-layout">
+      <section class="panel"><div class="section-top"><div><div class="eyebrow">Catálogo</div><h2>Productos</h2></div></div><div id="products" class="product-list"><p>Cargando productos…</p></div></section>
+      <section class="panel"><div class="section-top"><div><div class="eyebrow">Nuevo producto</div><h2>Crear producto</h2></div></div>
+        <form id="create-product" class="product-form">
+          <label>Código interno<input name="code" required maxlength="50" placeholder="PERSONAL"></label>
+          <label>Nombre visible en la solicitud<input name="name" required maxlength="200" placeholder="Crédito personal"></label>
+          <label>Descripción<textarea name="description" maxlength="1000" rows="3"></textarea></label>
+          <button class="primary" type="submit">Crear producto</button>
+        </form>
+      </section>
+    </div>
+    <section class="panel conditions-panel" id="conditions-panel" hidden>
+      <div class="section-top"><div><div class="eyebrow">Condiciones</div><h2 id="conditions-title">Publicar condiciones</h2><p class="hint">Cada publicación crea una nueva versión. Las versiones anteriores conservan las solicitudes ya radicadas.</p></div></div>
+      <form id="edit-product" class="product-form product-edit">
+        <h3>Datos del producto</h3>
+        <div class="field-grid"><label>Nombre visible<input name="name" required maxlength="200"></label><label>Descripción<input name="description" maxlength="1000"></label></div>
+        <label class="check-label"><input name="isActive" type="checkbox"> Producto activo</label>
+        <button class="primary" type="submit">Guardar producto</button>
+      </form>
+      <div id="versions" class="version-list"></div>
+      <form id="create-version" class="product-form">
+        <div class="field-grid">
+          <label>Monto mínimo<input name="minimumAmount" type="number" min="1" step="0.01" required></label>
+          <label>Monto máximo<input name="maximumAmount" type="number" min="1" step="0.01" required></label>
+          <label>Cuotas mínimas<input name="minimumInstallments" type="number" min="1" step="1" required></label>
+          <label>Cuotas máximas<input name="maximumInstallments" type="number" min="1" step="1" required></label>
+          <label>Tasa (%)<input name="rate" type="number" min="0" step="0.0001" required><small>Porcentaje según el tipo de tasa elegido.</small></label>
+          <label>Tipo de tasa<select name="rateKind" required><option value="PeriodicEffective">Efectiva por período</option><option value="EffectiveAnnual">Efectiva anual</option><option value="NominalAnnual">Nominal anual</option><option value="PeriodicSimple">Simple por período</option><option value="AnnualSimple">Simple anual</option></select></label>
+          <label>Frecuencia de pago<select name="frequency" required><option value="Monthly">Mensual</option><option value="Every15Days">Cada 15 días</option><option value="SemiMonthly">Quincenal fija</option><option value="Weekly">Semanal</option><option value="Daily">Diaria</option><option value="Quarterly">Trimestral</option><option value="SemiAnnual">Semestral</option><option value="Annual">Anual</option></select></label>
+          <label>Amortización<select name="method" required><option value="French">Cuota fija</option><option value="FixedPrincipal">Abono fijo a capital</option><option value="SimplePeriodic">Interés simple periódico</option><option value="Bullet">Pago único</option></select></label>
+          <label>Base de días<select name="dayCount" required><option value="Actual365Fixed">Actual / 365</option><option value="Actual360">Actual / 360</option><option value="ActualActual">Actual / actual</option></select></label>
+          <label>Vigente desde<input name="validFrom" type="date" required></label>
+          <label>Seguro por cuota<input name="insurancePerInstallment" type="number" min="0" step="0.01" value="0" required></label>
+          <label>Otros cargos por cuota<input name="otherChargePerInstallment" type="number" min="0" step="0.01" value="0" required></label>
+          <label>Tasa de mora anual (%)<input name="lateAnnualRate" type="number" min="0" step="0.0001" value="0" required></label>
+          <label>Días de gracia para mora<input name="lateGraceDays" type="number" min="0" step="1" value="0" required></label>
+        </div>
+        <button class="primary" type="submit">Publicar condiciones</button>
+      </form>
+    </section>
+  </main>
+  <script src="session.js?v=11"></script>
+  <script src="productos.js?v=1"></script>
+</body>
+</html>

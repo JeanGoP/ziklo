@@ -10,6 +10,7 @@ public sealed record CreateClient(
     decimal? MonthlyIncome, string? Employer);
 
 public sealed record CreateProduct(string Code, string Name, string? Description);
+public sealed record UpdateProduct(string Name, string? Description, bool IsActive);
 
 public sealed record CreateClientReference(ClientReferenceKind Kind, string Name,
     string? Relationship, string? Phone, string? Email, string? Notes);

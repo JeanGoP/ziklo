@@ -26,7 +26,15 @@ function group(title, fields, values) {
 async function load() {
   if (!reference || !/^SOL-[A-Z0-9-]{8,35}$/.test(reference))
     throw new Error('Abre esta hoja desde el comprobante de una solicitud radicada.');
-  const response = await fetch(`/api/demo/credit-applications/${encodeURIComponent(reference)}`);
+  const localDemo = ['127.0.0.1', 'localhost', '::1'].includes(location.hostname);
+  const access = await window.zikloAccessReady;
+  const companyId = access?.profile?.companies?.[0]?.companyId;
+  if (!localDemo && !companyId)
+    throw new Error('Ingresa con tu cuenta para consultar esta solicitud.');
+  const endpoint = companyId
+    ? `/api/companies/${encodeURIComponent(companyId)}/credit-applications/by-reference/${encodeURIComponent(reference)}/print`
+    : `/api/demo/credit-applications/${encodeURIComponent(reference)}`;
+  const response = await zikloFetch(endpoint);
   if (!response.ok) throw new Error('No se pudo cargar la solicitud para imprimir.');
   const application = await response.json();
   const details = JSON.parse(application.formDataJson || '{}');

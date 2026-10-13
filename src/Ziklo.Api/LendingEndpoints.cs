@@ -217,7 +217,8 @@ internal static class LendingEndpoints
         group.MapGet("/products", async (Guid companyId, ZikloDbContext db,
             HttpContext http, CancellationToken ct) =>
         {
-            if (!HasPermission(http, BusinessPermission.ViewLoans)) return Results.Forbid();
+            if (!HasPermission(http, BusinessPermission.ViewLoans) &&
+                !HasPermission(http, BusinessPermission.ManageProducts)) return Results.Forbid();
             var products = await db.CreditProducts.AsNoTracking()
                 .Where(x => x.CompanyId == companyId)
                 .OrderBy(x => x.Code)
@@ -226,10 +227,30 @@ internal static class LendingEndpoints
             return Results.Ok(products);
         });
 
+        group.MapPut("/products/{productId:guid}", async (Guid companyId,
+            Guid productId, UpdateProduct command, ZikloDbContext db,
+            HttpContext http, CancellationToken ct) =>
+        {
+            if (!HasPermission(http, BusinessPermission.ManageProducts)) return Results.Forbid();
+            if (string.IsNullOrWhiteSpace(command.Name) || command.Name.Trim().Length > 200 ||
+                command.Description?.Trim().Length > 1000)
+                return Results.Problem("Revisa el nombre y la descripción del producto.", statusCode: 400);
+            var product = await db.CreditProducts.SingleOrDefaultAsync(x =>
+                x.CompanyId == companyId && x.Id == productId, ct);
+            if (product is null) return Results.NotFound();
+            product.Name = command.Name.Trim();
+            product.Description = command.Description?.Trim();
+            product.IsActive = command.IsActive;
+            await db.SaveChangesAsync(ct);
+            return Results.Ok(new { product.Id, product.Code, product.Name,
+                product.Description, product.IsActive });
+        });
+
         group.MapGet("/products/{productId:guid}/versions", async (Guid companyId,
             Guid productId, ZikloDbContext db, HttpContext http, CancellationToken ct) =>
         {
-            if (!HasPermission(http, BusinessPermission.ViewLoans)) return Results.Forbid();
+            if (!HasPermission(http, BusinessPermission.ViewLoans) &&
+                !HasPermission(http, BusinessPermission.ManageProducts)) return Results.Forbid();
             if (!await db.CreditProducts.AnyAsync(x => x.CompanyId == companyId &&
                 x.Id == productId, ct)) return Results.NotFound();
             var versions = await db.ProductVersions.AsNoTracking()
@@ -246,6 +267,82 @@ internal static class LendingEndpoints
             var version = await service.CreateProductVersionAsync(companyId, productId, command, ct);
             return Results.Created($"/api/companies/{companyId}/products/{productId}/versions/{version.Id}",
                 new { version.Id, version.ProductId, version.Number, version.ValidFrom });
+        });
+
+        group.MapPost("/credit-applications/submit", async (Guid companyId,
+            HttpContext http, ICreditApplicationService service, CancellationToken ct) =>
+        {
+            if (!HasPermission(http, BusinessPermission.CreateLoan)) return Results.Forbid();
+            if (!http.Request.HasFormContentType)
+                return Results.Problem("Envía el formulario con multipart/form-data.", statusCode: 415);
+            if (http.Request.ContentLength > 31 * 1024 * 1024)
+                return Results.Problem("La solicitud supera el tamaño permitido.", statusCode: 413);
+            try
+            {
+                var form = await http.Request.ReadFormAsync(ct);
+                string Value(string key) => form[key].ToString();
+                if (!Guid.TryParse(Value("productVersionId"), out Guid versionId) ||
+                    !decimal.TryParse(Value("monthlyIncome"), NumberStyles.Number,
+                        CultureInfo.InvariantCulture, out decimal income) ||
+                    !decimal.TryParse(Value("monthlyObligations"), NumberStyles.Number,
+                        CultureInfo.InvariantCulture, out decimal obligations) ||
+                    !decimal.TryParse(Value("requestedAmount"), NumberStyles.Number,
+                        CultureInfo.InvariantCulture, out decimal amount) ||
+                    !int.TryParse(Value("requestedInstallments"), out int installments))
+                    return Results.Problem("Revisa los valores numéricos de la solicitud.", statusCode: 400);
+                if (form.Files.Count > CreditApplicationService.MaximumDocuments)
+                    return Results.Problem("Adjunta máximo tres soportes.", statusCode: 400);
+                var uploads = new List<CreditApplicationUpload>();
+                foreach (var file in form.Files)
+                {
+                    if (file.Length > CreditApplicationService.MaximumDocumentBytes)
+                        return Results.Problem("Cada soporte puede tener máximo 10 MB.", statusCode: 413);
+                    using var buffer = new MemoryStream();
+                    await file.CopyToAsync(buffer, ct);
+                    uploads.Add(new CreditApplicationUpload(file.Name, file.FileName,
+                        file.ContentType, buffer.ToArray()));
+                }
+                Guid userId = Guid.Parse(http.User.FindFirstValue(ClaimTypes.NameIdentifier)!);
+                var request = new SubmitCreditApplication(companyId, versionId,
+                    Value("identificationType"), Value("identificationNumber"),
+                    Value("applicantName"), Value("email"), Value("phone"),
+                    Value("city"), Value("economicActivity"), income, obligations,
+                    amount, installments, Value("purpose"), Value("formDataJson"),
+                    Value("demoAcknowledged") == "true", uploads, userId);
+                var receipt = await service.SubmitAsync(request, ct);
+                return Results.Created("/solicitar.html", receipt);
+            }
+            catch (LendingRuleException error)
+            {
+                return Results.Problem(error.Message, statusCode: 400, title: "Solicitud no válida");
+            }
+            catch (InvalidDataException)
+            {
+                return Results.Problem("El formulario supera el tamaño permitido.", statusCode: 413);
+            }
+            catch (DbUpdateException)
+            {
+                return Results.Problem("No se pudo radicar la solicitud. Intenta nuevamente.", statusCode: 409);
+            }
+        }).RequireRateLimiting("credit-application");
+
+        group.MapGet("/credit-applications/by-reference/{reference}/print", async (
+            Guid companyId, string reference, ZikloDbContext db, HttpContext http,
+            CancellationToken ct) =>
+        {
+            if (!HasPermission(http, BusinessPermission.ViewLoans)) return Results.Forbid();
+            var application = await db.CreditApplications.AsNoTracking()
+                .SingleOrDefaultAsync(x => x.CompanyId == companyId && x.Reference == reference, ct);
+            if (application is null) return Results.NotFound();
+            var company = await db.Companies.AsNoTracking()
+                .SingleAsync(x => x.Id == companyId, ct);
+            return Results.Ok(new { application.Reference, application.CreatedAtUtc,
+                application.IdentificationType, application.IdentificationNumber,
+                application.ApplicantName, application.Email, application.Phone,
+                application.City, application.EconomicActivity, application.MonthlyIncome,
+                application.MonthlyObligations, application.RequestedAmount,
+                application.RequestedInstallments, application.Purpose,
+                application.FormDataJson, company.Name, company.TaxIdentifier });
         });
 
         group.MapGet("/credit-applications", async (Guid companyId, string? search,
