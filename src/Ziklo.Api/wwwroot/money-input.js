@@ -6,12 +6,12 @@ window.ZikloMoney = (() => {
     const lastComma = source.lastIndexOf(',');
     const lastDot = source.lastIndexOf('.');
     let decimalIndex = -1;
-    if (lastComma >= 0 && lastDot >= 0)
-      decimalIndex = Math.max(lastComma, lastDot);
-    else if (lastComma >= 0)
-      decimalIndex = source.indexOf(',') === lastComma ? lastComma : -1;
-    else if (lastDot >= 0 && !/^\d{1,3}(\.\d{3})+$/.test(source))
-      decimalIndex = lastDot;
+    const lastSeparator = Math.max(lastComma, lastDot);
+    // Una coma o un punto seguido de demasiados dígitos representa miles.
+    // Así, 5,471747777 pasa a 5.471.747.777 mientras se escribe.
+    if (lastSeparator >= 0 &&
+        source.slice(lastSeparator + 1).replace(/\D/g, '').length <= maxDecimals)
+      decimalIndex = lastSeparator;
     const integer = (decimalIndex < 0 ? source : source.slice(0, decimalIndex))
       .replace(/\D/g, '').replace(/^0+(?=\d)/, '');
     const decimals = decimalIndex < 0 ? '' : source.slice(decimalIndex + 1)
