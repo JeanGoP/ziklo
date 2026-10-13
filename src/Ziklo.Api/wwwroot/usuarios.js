@@ -181,8 +181,8 @@ function openRole(role) {
 
 el('close-role').addEventListener('click', () => el('role-dialog').close());
 
-async function loadUsers() {
-  const users = await api(`/api/companies/${companyId}/users`);
+async function loadUsers(preloadedUsers) {
+  const users = preloadedUsers ?? await api(`/api/companies/${companyId}/users`);
   const target = el('users');
   target.replaceChildren();
   if (!users.length) { target.textContent = 'Aún no hay usuarios.'; return; }
@@ -273,11 +273,17 @@ el('password-form').addEventListener('submit', async event => {
     currentUserId = profile.id;
     companyId = profile.companies[0]?.companyId;
     if (!companyId) throw new Error('No tienes una empresa activa.');
-    roles = await api(`/api/companies/${companyId}/roles`);
-    customProfiles = await api(`/api/companies/${companyId}/profiles`);
-    permissionEntries = await api(`/api/companies/${companyId}/permissions`);
+    const [loadedRoles, loadedProfiles, loadedPermissions, users] = await Promise.all([
+      api(`/api/companies/${companyId}/roles`),
+      api(`/api/companies/${companyId}/profiles`),
+      api(`/api/companies/${companyId}/permissions`),
+      api(`/api/companies/${companyId}/users`)
+    ]);
+    roles = loadedRoles;
+    customProfiles = loadedProfiles;
+    permissionEntries = loadedPermissions;
     renderRoles();
-    await loadUsers();
+    await loadUsers(users);
     el('workspace').hidden = false;
   } catch (error) { status(error.message, true); }
 })();

@@ -13,6 +13,8 @@ const requiredPermissions = {
 };
 const signInUrl = `/login.html?next=${encodeURIComponent(location.pathname + location.search)}`;
 const tokenAtLoad = sessionStorage.getItem('zikloAccessToken');
+const accessCacheKey = 'zikloAccessCache';
+const accessCacheLifetime = 5 * 60 * 1000;
 if (backOfficePages.has(location.pathname) && !tokenAtLoad)
   location.replace(signInUrl);
 
@@ -66,25 +68,28 @@ function startAlertBadge(companyId, headers) {
     link.textContent = `Avisos (${alerts.total})`;
     link.setAttribute('aria-label', `${alerts.total} solicitudes tuyas necesitan información`);
   }
-  refresh().catch(() => {});
+  setTimeout(() => refresh().catch(() => {}), 1200);
   setInterval(() => refresh().catch(() => {}), 30000);
 }
 
-async function checkPageAccess() {
-  if (!tokenAtLoad) return;
-  const headers = {Authorization: `Bearer ${tokenAtLoad}`};
-  const profileResponse = await fetch('/api/auth/me', {headers, cache:'no-store'});
-  if (profileResponse.status === 401) {
-    sessionStorage.removeItem('zikloAccessToken');
-    document.querySelector('.logout-button')?.remove();
-    if (backOfficePages.has(location.pathname)) {
-      location.replace(signInUrl);
-      return new Promise(() => {});
-    }
-    return;
-  }
-  if (!profileResponse.ok) return;
-  const profile = await profileResponse.json();
+function clearAccess() {
+  sessionStorage.removeItem('zikloAccessToken');
+  sessionStorage.removeItem(accessCacheKey);
+  document.querySelector('.logout-button')?.remove();
+}
+
+function cachedAccess() {
+  try {
+    const cached = JSON.parse(sessionStorage.getItem(accessCacheKey) || 'null');
+    if (cached?.token !== tokenAtLoad || !cached?.profile ||
+        !Array.isArray(cached.permissions) ||
+        typeof cached.savedAt !== 'number' || cached.savedAt > Date.now() ||
+        Date.now() - cached.savedAt > accessCacheLifetime) return null;
+    return {profile: cached.profile, permissions: new Set(cached.permissions)};
+  } catch { return null; }
+}
+
+function applyAccess(profile, permissions) {
   const radicatorState = document.getElementById('radicator-state');
   if (radicatorState)
     radicatorState.textContent = `Radicando con la cuenta ${profile.email}. Si el analista pide información, verás el motivo en Avisos.`;
@@ -93,20 +98,6 @@ async function checkPageAccess() {
     showSessionIdentity(profile, null);
     return {profile, permissions: new Set()};
   }
-  const permissionResponse = await fetch(
-    `/api/companies/${encodeURIComponent(company.companyId)}/my-permissions`,
-    {headers, cache:'no-store'});
-  if (permissionResponse.status === 401) {
-    sessionStorage.removeItem('zikloAccessToken');
-    document.querySelector('.logout-button')?.remove();
-    if (backOfficePages.has(location.pathname)) {
-      location.replace(signInUrl);
-      return new Promise(() => {});
-    }
-    return;
-  }
-  if (!permissionResponse.ok) return;
-  const permissions = new Set(await permissionResponse.json());
   for (const link of document.querySelectorAll('.topbar nav a[href]')) {
     const required = requiredPermissions[new URL(link.href).pathname];
     if (required) link.hidden = !permissions.has(required);
@@ -130,8 +121,47 @@ async function checkPageAccess() {
     return new Promise(() => {});
   }
   showSessionIdentity(profile, company);
-  if (permissions.has('ViewLoans')) startAlertBadge(company.companyId, headers);
+  if (permissions.has('ViewLoans') && location.pathname !== '/solicitudes.html')
+    startAlertBadge(company.companyId, {Authorization: `Bearer ${tokenAtLoad}`});
   return {profile, permissions};
+}
+
+async function checkPageAccess() {
+  if (!tokenAtLoad) return;
+  const cached = cachedAccess();
+  if (cached) return applyAccess(cached.profile, cached.permissions);
+  const headers = {Authorization: `Bearer ${tokenAtLoad}`};
+  const profileResponse = await fetch('/api/auth/me', {headers, cache:'no-store'});
+  if (profileResponse.status === 401) {
+    clearAccess();
+    if (backOfficePages.has(location.pathname)) {
+      location.replace(signInUrl);
+      return new Promise(() => {});
+    }
+    return;
+  }
+  if (!profileResponse.ok) return;
+  const profile = await profileResponse.json();
+  const company = profile.companies?.[0];
+  if (!company) return applyAccess(profile, new Set());
+  const permissionResponse = await fetch(
+    `/api/companies/${encodeURIComponent(company.companyId)}/my-permissions`,
+    {headers, cache:'no-store'});
+  if (permissionResponse.status === 401) {
+    clearAccess();
+    if (backOfficePages.has(location.pathname)) {
+      location.replace(signInUrl);
+      return new Promise(() => {});
+    }
+    return;
+  }
+  if (!permissionResponse.ok) return;
+  const permissions = new Set(await permissionResponse.json());
+  sessionStorage.setItem(accessCacheKey, JSON.stringify({
+    token: tokenAtLoad, savedAt: Date.now(), profile,
+    permissions: [...permissions]
+  }));
+  return applyAccess(profile, permissions);
 }
 
 window.zikloAccessReady = checkPageAccess();
@@ -149,7 +179,7 @@ window.zikloFetch = async function (path, options = {}) {
   const response = await fetch(path, {...options, headers});
   if (response.status === 401 && String(path).startsWith('/api/') &&
       !location.pathname.endsWith('/login.html')) {
-    sessionStorage.removeItem('zikloAccessToken');
+    clearAccess();
     location.replace(`/login.html?next=${encodeURIComponent(location.pathname + location.search)}`);
   }
   return response;
@@ -162,7 +192,7 @@ if (sessionStorage.getItem('zikloAccessToken')) {
     logout.type = 'button'; logout.className = 'logout-button';
     logout.textContent = 'Salir';
     logout.addEventListener('click', () => {
-      sessionStorage.removeItem('zikloAccessToken');
+      clearAccess();
       location.assign('/login.html');
     });
     nav.append(logout);

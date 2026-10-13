@@ -16,6 +16,7 @@ async function signIn(email, password) {
   if (!response.ok) throw new Error(response.status === 401
     ? 'Correo o contraseña incorrectos.' : 'No fue posible iniciar sesión.');
   const result = await response.json();
+  sessionStorage.removeItem('zikloAccessCache');
   sessionStorage.setItem('zikloAccessToken', result.accessToken);
   location.replace(destination());
 }
